@@ -1,4 +1,3 @@
-<?php ?>
 		</div>
 		<div class="bottom">
 			<div id="date">

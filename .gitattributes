@@ -1,0 +1,9 @@
+*.php linguist-language=PHP
+*.c linguist-language=C
+*.h linguist-language=C++
+*.cpp linguist-language=C++
+*.html linguist-language=PHP
+*.css linguist-language=CSS
+*.py linguist-language=Python
+*.java linguist-language=Java
+*.sh linguist-language=Shell

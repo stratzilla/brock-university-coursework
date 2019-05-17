@@ -1,0 +1,147 @@
+a{
+	color: #FFFFFF;
+}
+body{
+	background-image:url('./images/wrapbg.jpg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	font-size: 15pt;
+	font-family: "Tahoma", "Verdana", sans-serif;
+}
+p{
+	text-align: center;
+	font-weight: bold;
+}
+.display{
+	padding-top: 1em;
+	padding-left: 2em;
+	padding-bottom: 1em;
+}
+.browse{
+	text-align: center;
+	font-weight: bold;
+}
+.redirect{
+	width: 300px;
+	height: 200px;
+	margin-top: -100px;
+	margin-left: -150px;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	text-align: center;
+	vertical-align: center;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+.top{
+	background-color: #000000;
+	font-size: 11pt;
+	color: #FFFFFF;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 3pt;
+	width: 90%;
+}
+.main{
+	background-color: #FFFFFF;
+	font-size: 11pt;
+	color: #000000;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 3pt;
+	padding-right: 3pt;
+	padding-top: 10pt;
+	padding-bottom: 10pt;
+	width: 90%;
+	clear: both;
+	overflow: hidden;
+}
+.main a{
+	color: #000000;
+}
+.bottom{
+	background-color: #000000;
+	font-size: 11pt;
+	color: #FFFFFF;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 3pt;
+	width: 90%;
+	clear: both;
+}
+.shiftright{
+	float: right;
+}
+.delshift{
+	float: right;
+	overflow: hidden;
+	clear: both;
+}
+.sortleft{
+	float: left;
+	width: 20%;
+}
+.sortright{
+	float: left;
+	width: 20%;
+	overflow: hidden;
+}
+#title{
+	color: #FFFFFF;
+	font-weight: bold;
+	margin-left: 1em;
+	font-size: 15pt;
+}
+#login{
+	float: right;
+	overflow: hidden;
+}
+#copyright{
+	text-align: right;
+}
+#date{
+	float: left;
+}
+fieldset{
+	margin-right: 80%;
+}
+table{
+	text-align: center;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000000;
+}
+th{
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000000;
+}
+tr:nth-child(even){
+	background-color: #FFFFFF;
+}
+tr:nth-child(odd){
+	background-color: #DDDDDD;
+}
+table .num{
+	width: 5%;
+}
+table .bk{
+	width: 35%;
+}
+table .yr{
+	width: 5%;
+}
+table .au{
+	width: 20%;
+}
+table .cd{
+	width: 5%;
+}
+table .ge{
+	width: 10%;
+}
+table .pb{
+	width: 20%;
+}

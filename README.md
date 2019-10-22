@@ -6,4 +6,4 @@ This repository encompasses all of the cumulative work I had done at Brock Unive
 
 Earlier work might not have comments, and very few projects have execution instructions. As well, many comments might pertain to school directly (ie. comments I left for the professor or marker). Lastly, much of the earlier (Java) work was developed on Windows and only the pertinent source files are included. Whether they can be built as-is is a shot in the dark. Pretty much all of the later work was developed in a Linux environment and usually has some shell script to compile and/or execute.
 
-This repository is mostly for posterity and my own reference.
+This repository is mostly for posterity and my own reference. To any students or professors, past or present, reading this repository: this work is the sole ownership of myself and not intended for students to seek answers to their own assignments. Reusing assignments year-after-year is poor planning and to be frank, lazy: I would hope this repository is essentially useless to students taking these courses after I have left.

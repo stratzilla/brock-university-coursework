@@ -1,11 +1,3 @@
-/**
- * Robert Scott
- * 4582342
- * rs09co@brocku.ca
- * COSC3P71 Assignment 1
- * October 4th, 2019
- */
-
 #include <stdio.h>
 #include <iostream>
 #include <vector>

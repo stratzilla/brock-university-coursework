@@ -1,11 +1,3 @@
-/**
- * Robert Scott
- * 4582342
- * rs09co@brocku.ca
- * COSC2P95 Assignment 5
- * November 1st, 2019
- */
-
 #include "PQueue.h"
 #include <stdio.h>
 #include <string>

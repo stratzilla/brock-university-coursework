@@ -130,7 +130,7 @@ public class runGeneticDecipher {
 	private static void printHelp() {
 		System.out.println("\nCompile and execute the program as so:\n");
 		System.out.println(" $ javac runGeneticDecipher.java");
-		System.out.println(" $ java runGeneticDecipher <arg1> <arg2> <arg3> <arg4> <arg5> <arg6> <arg7> <arg8> <arg9> <arg10> <arg10>\n");
+		System.out.println(" $ java runGeneticDecipher <arg1> <arg2> <arg3> <arg4> <arg5> <arg6> <arg7> <arg8> <arg9> <arg10> <arg10> <arg11>\n");
 		System.out.println("Where the following are arguments along with their type:\n");
 		System.out.println("<arg1> = population size (integer, [1, n])");
 		System.out.println("<arg2> = maximum generations (integer, [1, n])");
@@ -147,7 +147,6 @@ public class runGeneticDecipher {
 		System.out.println("<arg11> = filename of input encrypted text (String)\n");
 		System.out.println("Any values outside of these ranges will be clamped. 'n' is any maximum.\n");
 		System.out.println("The last argument, <arg11>, is the filename to a text file containing encrypted text.");
-		System.out.println("In the working directory are the four encrypted texts provided by the assignment guidelines.");
 		System.out.println("For example, \"enc1.txt\", \"enc2.txt\", etc.\n");
 	}
 }

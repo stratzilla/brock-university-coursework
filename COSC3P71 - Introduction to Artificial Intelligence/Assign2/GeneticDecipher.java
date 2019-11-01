@@ -30,8 +30,6 @@ public class GeneticDecipher {
 	private ArrayList<KeyScorePair> eltColl = new ArrayList<KeyScorePair>();
 	// for tournamenting
 	private ArrayList<KeyScorePair> tourn = new ArrayList<KeyScorePair>();
-	// for debug/graph making
-	private final boolean debug = false;
 	
 	// constructor for class
 	public GeneticDecipher(int mp, int mg, int cs, int en, int tn, int ct, int mt, double cr, double mr, int rs, String ec) {
@@ -84,7 +82,7 @@ public class GeneticDecipher {
 			tourn.clear();
 			eltColl.clear();
 			// if mutation is not uniform, i.e. changing with time
-			if (muType == 2) {
+			if (muType == 2 /** && i > (maxGen/3) */ ) {
 				// find graduations between initial..1.00 based on gens
 				double steps = (1-initialMutatRate)/(double)maxGen;
 				mutatRate += steps; // slightly increase mutation
@@ -214,7 +212,7 @@ public class GeneticDecipher {
 					// if two point crossover, instead crossover based on two pivots
 					int crossPoint = rnd.nextInt(m.length() - 1) + 1;
 					// second crosspoint is crosspoint..m.length
-					int secondCrossPoint = rnd.nextInt(m.length() - crossPoint) + crossPoint;
+					int secondCrossPoint = rnd.nextInt(m.length() - crossPoint + 1) + crossPoint - 1;
 					if (i < crossPoint) {
 						chrStringA.append(f.charAt(i));
 						chrStringB.append(m.charAt(i));
@@ -304,17 +302,13 @@ public class GeneticDecipher {
 	 * @param g - the generation number
 	 */
 	private void bestInGeneration(KeyScorePair k, int g) {
-		if (debug) { // used for graphs in report
-			//System.out.println(g + " " + floor(10000*k.getScore())/10000);
-		} else {
-			double count = 0.00;
-			for (int i = 0; i < chrColl.size(); i++) {
-				count += chrColl.get(i).getScore();
-			}
-			count = floor(100*(count/chrColl.size()))/100;
-			String keyScore = "(" + k.getKey() + ", " + floor(10000*k.getScore())/10000 + ")";
-			System.out.println("Generation " + g + ", best is: " + keyScore + ", avg: " + count);
+		double count = 0.00;
+		for (int i = 0; i < chrColl.size(); i++) {
+			count += chrColl.get(i).getScore();
 		}
+		count = floor(100*(count/chrColl.size()))/100;
+		String keyScore = "(" + k.getKey() + ", " + floor(10000*k.getScore())/10000 + ")";
+		System.out.println("Generation " + g + ", best is: " + keyScore + ", avg: " + count);
 	}
 	
 	/**

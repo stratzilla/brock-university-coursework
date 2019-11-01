@@ -46,8 +46,8 @@ public class runGeneticDecipher {
 		maxPop = (maxPop < 1) ? 1 : maxPop;
 		maxGen = (maxGen < 1) ? 1 : maxGen;
 		crSize = (crSize < 1) ? 1 : crSize;
-		eltNum = (eltNum < 2) ? 2 : (eltNum > maxPop) ? maxPop : eltNum;
-		torNum = (torNum < 0) ? 0 : (torNum > maxPop-1) ? maxPop-1 : torNum;
+		eltNum = (eltNum < 2) ? 2 : (eltNum > maxPop/2) ? maxPop/2 : eltNum;
+		torNum = (torNum < 2) ? 2 : (torNum > 5) ? 5 : torNum;
 		crossRate = (crossRate < 0.00) ? 0.00 : (crossRate > 1.00) ? 1.00 : crossRate;
 		mutatRate = (mutatRate < 0.00) ? 0.00 : (mutatRate > 1.00) ? 1.00 : mutatRate;
 		// initialize encrypted text from file
@@ -130,13 +130,14 @@ public class runGeneticDecipher {
 	private static void printHelp() {
 		System.out.println("\nCompile and execute the program as so:\n");
 		System.out.println(" $ javac runGeneticDecipher.java");
-		System.out.println(" $ java runGeneticDecipher <arg1> <arg2> <arg3> <arg4> <arg5> <arg6> <arg7> <arg8> <arg9> <arg10> <arg10>\n");
+		System.out.println(" $ java runGeneticDecipher <arg1> <arg2> <arg3> <arg4> <arg5> <arg6> <arg7> <arg8> <arg9> <arg10> <arg10> <arg11>\n");
 		System.out.println("Where the following are arguments along with their type:\n");
 		System.out.println("<arg1> = population size (integer, [1, n])");
 		System.out.println("<arg2> = maximum generations (integer, [1, n])");
 		System.out.println("<arg3> = chromosome size (integer, [1, n])");
-		System.out.println("<arg4> = elite population size (integer, [2, popSize])");
-		System.out.println("<arg5> = tournament selection k (integer, [0, (popSize-1)])");
+		System.out.println("<arg4> = elite population size (integer, [2, m])");
+		System.out.println("         (m < popSize/2)");
+		System.out.println("<arg5> = tournament selection k (integer, [2, 5])");
 		System.out.println("<arg6> = crossover type (integer, [1, 4])");
 		System.out.println("         (1. 1-Point, 2. 2-Point, 3. Uniform, 4. Random)");
 		System.out.println("<arg7> = mutation type (integer, [1, 2])");

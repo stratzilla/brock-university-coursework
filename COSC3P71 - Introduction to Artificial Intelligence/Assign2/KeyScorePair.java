@@ -17,14 +17,6 @@ public class KeyScorePair {
 	public String getKey() { return key; }
 	public double getScore() { return score; }
 	
-	/*********************************************************
-	 * the below function was provided but I did edit parts
-	 * for readability and one key "error". Functionality 
-	 * is identical, I only fixed indentation and made 
-	 * that array instantiation cleaner as well as one of my
-	 * own fixes. No comments provided as it is not my code.
-	 *********************************************************/
-
 	private double fitness(String k, String c) {
 		double[] frequencies =	{0.0850, 0.0160, 0.0316, 0.0387, 0.1210,
 								 0.0218, 0.0209, 0.0496, 0.0733, 0.0022,

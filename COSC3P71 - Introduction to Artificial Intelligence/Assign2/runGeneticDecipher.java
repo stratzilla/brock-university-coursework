@@ -151,3 +151,4 @@ public class runGeneticDecipher {
 		System.out.println("For example, \"enc1.txt\", \"enc2.txt\", etc.\n");
 	}
 }
+

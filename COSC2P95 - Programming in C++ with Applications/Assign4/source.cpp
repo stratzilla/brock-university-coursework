@@ -101,5 +101,5 @@ double calculate(double x, double y, double z) {
 
 int main(void) {
 	populateArray(promptChoices());
-	return EXIT_SUCCESS;
+	return 0;
 }

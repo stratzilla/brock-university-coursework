@@ -10,14 +10,14 @@
 // constructor
 PQueue::PQueue() {
 	size = 0;
-	front = nullptr;
+	front = NULL;
 }
 
 // destructor
 PQueue::~PQueue() {
 	PRecord *tempRecord;
 	while (true) {
-		if (front == nullptr) { break; }
+		if (front == NULL) { break; }
 		tempRecord = front;
 		front = front->next;
 		delete tempRecord;
@@ -29,7 +29,7 @@ PQueue::~PQueue() {
  */
 void PQueue::resetQueue() {
 	delete front;
-	front = nullptr;
+	front = NULL;
 	size = 0;
 }
 
@@ -45,13 +45,13 @@ void PQueue::enqueue(std::string r, int p) {
 	PRecord *tempRecord;
 	newRecord->item = r;
 	newRecord->priority = p;
-	newRecord->next = nullptr;
-	if (front == nullptr) { // if only element
+	newRecord->next = NULL;
+	if (front == NULL) { // if only element
 		front = newRecord;
 	} else { // if not only element
 		tempRecord = front;
 		while(true) { // find next open spot
-			if (tempRecord->next == nullptr) { break; }
+			if (tempRecord->next == NULL) { break; }
 			tempRecord = tempRecord->next; // squeeze it in
 		}
 		tempRecord->next = newRecord;
@@ -71,7 +71,7 @@ std::string PQueue::dequeue() {
 	PRecord *tempRecord = front;
 	int bestPriority = INT_MAX; // any priority will be lower valued (ie higher)
 	std::string toReturn = ""; // for returning later
-	while(tempRecord != nullptr) { // iterate over the queue
+	while(tempRecord != NULL) { // iterate over the queue
 		if (tempRecord->priority < bestPriority) { // if better priority
 			bestPriority = tempRecord->priority; // overwrite
 			toReturn = tempRecord->item;
@@ -87,11 +87,11 @@ std::string PQueue::dequeue() {
 	 * otherwise it will seek out the same record as above and remove
 	 */
 	tempRecord = front;
-	while(tempRecord != nullptr) {
+	while(tempRecord != NULL) {
 		// this only really applies if first record is it
 		if (tempRecord->priority == bestPriority) {
-			if (tempRecord->next == nullptr) { // if only element
-				front = nullptr; // erase
+			if (tempRecord->next == NULL) { // if only element
+				front = NULL; // erase
 			} else { // otherwise, set new front
 				front = tempRecord->next;
 			}
@@ -100,8 +100,8 @@ std::string PQueue::dequeue() {
 		}
 		// if not first element
 		if (tempRecord->next->priority == bestPriority) {
-			if (tempRecord->next->next == nullptr) {
-				tempRecord->next = nullptr;
+			if (tempRecord->next->next == NULL) {
+				tempRecord->next = NULL;
 			} else {
 				tempRecord->next = tempRecord->next->next;
 			}
@@ -141,7 +141,7 @@ void PQueue::printQueue() {
 	std::cout << std::endl << "Priority Queue contains (record, priority):" << std::endl;
 	PRecord *tempRecord = front;
 	while(true) {
-		if (tempRecord == nullptr) { break; }
+		if (tempRecord == NULL) { break; }
 		std::cout << "{" << tempRecord->item << ", " << tempRecord->priority << "} --> ";
 		tempRecord = tempRecord->next;
 	}

@@ -102,5 +102,5 @@ int main(void) {
 		if (choices[0] == 0) { break; }
 		populateArray(choices);
 	}
-	return EXIT_SUCCESS;
+	return 0;
 }

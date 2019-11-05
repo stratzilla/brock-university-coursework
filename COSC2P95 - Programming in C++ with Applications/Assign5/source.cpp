@@ -52,5 +52,5 @@ int main(void) {
 		in = -1;
 		pq.printQueue();
 	}
-	return EXIT_SUCCESS;
+	return 0;
 }

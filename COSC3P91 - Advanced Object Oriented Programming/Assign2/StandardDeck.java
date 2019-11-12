@@ -5,7 +5,6 @@ import java.util.Collections;
 
 /**
  * StandardDeck class for Five-Card poker, implements Deck interface
- * @author Robert Scott - 2018
  */
 public final class StandardDeck implements Deck {
     

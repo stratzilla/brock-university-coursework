@@ -5,7 +5,6 @@ import java.util.Scanner;
 
 /**
  * Board class for Five-Card Poker
- * @author Robert Scott - 2018
  */
 public final class Board {
     

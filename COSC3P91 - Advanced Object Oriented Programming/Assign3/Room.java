@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 
 /**
  * Room class for Socket Programmed Chat
- *
- * @author Robert Scott - 2018
  */
 public class Room {
 

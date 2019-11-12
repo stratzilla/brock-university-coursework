@@ -2,7 +2,6 @@ package FivePoker;
 
 /**
  * Score class for Five-Card Poker
- * @author Robert Scott - 2018
  */
 public class Score {
     // 'histograms' of frequencies for ranks and suits

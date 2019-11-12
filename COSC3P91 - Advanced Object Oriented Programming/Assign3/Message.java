@@ -6,8 +6,6 @@ import java.util.Date;
 
 /**
  * Message class for Socket Programmed Chat
- *
- * @author Robert Scott - 2018
  */
 public class Message implements Serializable {
 

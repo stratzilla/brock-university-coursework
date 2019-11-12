@@ -7,7 +7,6 @@ import java.util.Comparator;
 
 /**
  * Hand class for Five-Card Poker
- * @author Robert Scott - 2018
  */
 public class Hand {
     

@@ -11,7 +11,6 @@ import java.util.Scanner;
 
 /**
  * GameMaster class for Five-Card Poker
- * @author Robert Scott - 2018
  */
 public final class GameMaster {
     

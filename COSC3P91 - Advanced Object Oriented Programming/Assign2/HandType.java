@@ -2,7 +2,6 @@ package Poker;
 
 /**
  * HandType determined by value enumeration for Five-Card Poker
- * @author Robert Scott - 2018
  */
 
     public enum HandType {

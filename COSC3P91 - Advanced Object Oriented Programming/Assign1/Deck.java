@@ -5,7 +5,6 @@ import java.util.Collections;
 
 /**
  * Deck class for Five-Card poker
- * @author Robert Scott - 2018
  */
 public final class Deck {
     

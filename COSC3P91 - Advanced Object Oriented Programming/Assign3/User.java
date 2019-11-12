@@ -5,8 +5,6 @@ import java.util.Scanner;
 
 /**
  * User class for Socket Programmed Chat
- *
- * @author Robert Scott - 2018
  */
 public class User extends Connection {
 

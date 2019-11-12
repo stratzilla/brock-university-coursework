@@ -2,7 +2,6 @@ package FivePoker;
 
 /**
  * Card class for Five-Card Poker.
- * @author Robert Scott - 2018
  */
 public class Card {
     

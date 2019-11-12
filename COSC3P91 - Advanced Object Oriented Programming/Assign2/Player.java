@@ -2,9 +2,6 @@ package Poker;
 
 /**
  * Player interface for Five-Card Poker
- * perhaps in the future Dealer can become player? Might be interesting and
- * would necessitate the interface
- * @author Robert Scott - 2018
  */
 public interface Player {
     

@@ -5,7 +5,6 @@ import static Poker.HandType.*;
 
 /**
  * Score class for Five-Card Poker
- * @author Robert Scott - 2018
  */
 public class Score {
     

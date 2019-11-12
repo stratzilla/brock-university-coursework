@@ -1,11 +1,3 @@
-//Robert Scott
-//4582342
-//rs09co@brocku.ca
-//COSC1P02
-//Prof. Hughes and Prof. Foxwell
-//November 6th, 2013
-//Assignment 2
-
 package Assign_2_C;
 
 import Media.*;

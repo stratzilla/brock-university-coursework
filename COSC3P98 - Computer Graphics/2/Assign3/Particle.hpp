@@ -2,7 +2,7 @@
 #include <random>
 #include <list>
 #include <array>
-#include "Line.h"
+#include "Line.hpp"
 
 /**
  * Particle Class

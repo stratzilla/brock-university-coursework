@@ -1,4 +1,4 @@
-#include "Pixel.h"
+#include "Pixel.hpp"
 
 /**
  * Pixel class implementation

@@ -4,8 +4,8 @@
 #include <list>
 #include <math.h>
 #include <iostream>
-#include "Particle.h"
-#include "Floor.h"
+#include "Particle.hpp"
+#include "Floor.hpp"
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "TemplateQueue.h"
+#include "TemplateQueue.hpp"
 #include <stdio.h>
 #include <array>
 

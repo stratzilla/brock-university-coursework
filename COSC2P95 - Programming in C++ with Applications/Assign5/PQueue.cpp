@@ -2,7 +2,7 @@
  * implementation of PQueue class
  */
 
-#include "PQueue.h"
+#include "PQueue.hpp"
 #include <iostream>
 #include <string>
 #include <limits.h>

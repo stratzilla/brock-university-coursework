@@ -1,4 +1,4 @@
-#include "Graph.h"
+#include "Graph.hpp"
 
 Graph::Graph(std::string fn) {
 	std::cout << "Using " << fn << std::endl;

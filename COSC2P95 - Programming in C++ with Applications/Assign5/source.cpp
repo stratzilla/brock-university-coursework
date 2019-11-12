@@ -1,4 +1,4 @@
-#include "PQueue.h"
+#include "PQueue.hpp"
 #include <stdio.h>
 #include <string>
 #include <limits.h>

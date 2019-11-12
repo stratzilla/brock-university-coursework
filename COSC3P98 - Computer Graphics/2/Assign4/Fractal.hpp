@@ -1,5 +1,5 @@
 #pragma once
-#include "Pixel.h"
+#include "Pixel.hpp"
 #include <list>
 
 /**

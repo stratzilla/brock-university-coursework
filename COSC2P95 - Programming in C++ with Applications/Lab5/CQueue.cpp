@@ -1,4 +1,4 @@
-#include "CQueue.h"
+#include "CQueue.hpp"
 #include <iostream>
 
 using namespace std;

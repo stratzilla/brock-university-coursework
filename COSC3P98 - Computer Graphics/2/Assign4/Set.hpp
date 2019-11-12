@@ -1,6 +1,6 @@
 #pragma once
-#include "Fractal.h"
-#include "ComplexNumber.h"
+#include "Fractal.hpp"
+#include "ComplexNumber.hpp"
 
 /**
  * Set class declaration

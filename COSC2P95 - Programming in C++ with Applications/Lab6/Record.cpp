@@ -1,4 +1,4 @@
-#include "Record.h"
+#include "Record.hpp"
 
 Record::Record(char content[]) {
 	int clength = 0;

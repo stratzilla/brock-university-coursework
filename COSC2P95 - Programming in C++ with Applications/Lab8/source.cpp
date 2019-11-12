@@ -1,4 +1,4 @@
-#include "Graph.h"
+#include "Graph.hpp"
 
 int main(int argc, char* argv[]) {
 	if (argc == 2) {

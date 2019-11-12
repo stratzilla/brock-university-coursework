@@ -1,6 +1,4 @@
-
-
-#include "PartB.h" // include function declarations, includes, etc
+#include "PartB.hpp" // include function declarations, includes, etc
 
 vector<int> eMatrix; // total resources
 vector<int> aMatrix; // available resources

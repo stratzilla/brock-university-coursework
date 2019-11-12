@@ -1,4 +1,4 @@
-#include "TPQueue.h"
+#include "TPQueue.hpp"
 #include <stdio.h>
 #include <string>
 #include <limits.h>

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include "Set.h"
+#include "Set.hpp"
 
 /**
  * test harness for Set class

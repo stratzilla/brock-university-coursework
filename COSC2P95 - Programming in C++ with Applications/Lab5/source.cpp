@@ -1,5 +1,5 @@
 #include "CQueue.cpp"
-#include <stdio.h>
+#include <stdio.hpp>
 
 using namespace std;
 

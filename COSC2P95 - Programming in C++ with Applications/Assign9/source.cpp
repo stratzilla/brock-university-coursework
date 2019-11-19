@@ -7,8 +7,14 @@
 #include <float.h>
 #include <sstream>
 
-// globals
+// to avoid magic numbers
 const static unsigned int DIMENSIONS = 2; // how many dimensions
+const static unsigned int NEIGHBORS = 4; // how many moves to make per position
+const static double BOUND = 512.00; // bounds for function
+const static double R_BOUND = 5.00; // for stochastic summand
+const static unsigned int MIN_THREADS = 1, MAX_THREADS = 8; // range for threading
+
+// globals
 std::array<double, DIMENSIONS> bestPosition; // best position so far
 double bestResult = DBL_MAX; // arbitrarily large
 volatile unsigned int occupied; // for thread count
@@ -26,7 +32,7 @@ std::string printBest();
  * @return - the fitness of that position (lower is better)
  */
 double eggHolderEvaluation(std::array<double, DIMENSIONS> p) {
-	double sum; // to aggregate dimensions
+	double sum = 0.00; // to aggregate dimensions
 	for (unsigned int i = 0; i < DIMENSIONS-1; i++) {
 		// split for readability, this is the EH summation
 		double subSum = (p[i+1] + 47) * (std::sin(std::sqrt(std::abs((p[i]/2) + p[i+1] + 47))));
@@ -45,11 +51,11 @@ void* hillClimb(void* ignore) {
 	std::array<double, DIMENSIONS> stoch; // stochastic element
 	double best, tempBest; // best of thread, temporary best used later
 	while (continuing) { // while thread alive
-		position = getRandPosition(-512, 512); // find a random position -512..512 for each dimension
+		position = getRandPosition(-BOUND, BOUND); // find a random position -512..512 for each dimension
 		best = eggHolderEvaluation(position); // find fitness of that position
-		while (checkInBounds(position, -512, 512)) { // while the position is within bounds
-			for (unsigned int i = 0; i < 4; i++) { // four possible moves
-				stoch = getRandPosition(-5, 5); // stochastic summand position -5..5
+		while (checkInBounds(position, -BOUND, BOUND)) { // while the position is within bounds
+			for (unsigned int i = 0; i < NEIGHBORS; i++) { // four possible moves
+				stoch = getRandPosition(-R_BOUND, R_BOUND); // stochastic summand position -5..5
 				std::array<double, DIMENSIONS> tempPos; // for adding
 				// add the stochastic element to the position
 				for (unsigned int j = 0; j < DIMENSIONS; j++) { tempPos[j] = stoch[j] + position[j]; }
@@ -129,17 +135,18 @@ void checkBest(int signal) {
 	std::cout << "Best so far: " << printBest();
 }
 
+// entry point
 int main (int argc, char* argv[]) {
-	srand(time(NULL));
-	signal(SIGINT, interrupted);
+	srand(time(NULL)); // initialize random seed based on system time
+	signal(SIGINT, interrupted); // signal handler overrides
 	signal(SIGUSR1, checkBest);
-	int choice = atoi(argv[1]);
-	pthread_t threads[8];
+	unsigned int choice = atoi(argv[1]); // parse user input
+	pthread_t threads[MAX_THREADS]; // max of eight threads
 	if (argc != 2) { std::cout << "Too few parameters." << std::endl; return 1; }
-	if (choice > 8) { std::cout << "Too many climbers." << std::endl; return 1; }
-	if (choice < 1) { std::cout << "Too few climbers." << std:: endl; return 1; }
+	if (choice > MAX_THREADS) { std::cout << "Too many climbers." << std::endl; return 1; }
+	if (choice < MIN_THREADS) { std::cout << "Too few climbers." << std:: endl; return 1; }
 	continuing = true;
-	for (int i = 0; i < choice; i++) {
+	for (unsigned int i = 0; i < choice; i++) {
 		pthread_create(&threads[i], NULL, &hillClimb, NULL);
 		occupied++;
 	}

@@ -403,15 +403,15 @@ void Board::showMoves(unsigned int c, unsigned int r) {
 		moveCoords[i][0] = moveList[i].getDestC();
 		moveCoords[i][1] = moveList[i].getDestR();
 	}
-	std::cout << "\n    ";
+	std::cout << "\n     ";
 	for (unsigned int i = 0; i < COLS; i++) {
 		std::cout << (char)(97 + i) << "   ";
 	}
-	std::cout << "\n  ";
+	std::cout << "\n   ";
 	for (unsigned int i = 0; i < COLS; i++) {
 		std::cout << "+---";
 	}
-	std::cout << "+ \n";
+	std::cout << "+ \n ";
 	for (unsigned int i = COLS; i > 0; i--) {
 		std::cout << i << " |";
 		for (unsigned int j = 0; j < ROWS; j++) {
@@ -428,11 +428,11 @@ void Board::showMoves(unsigned int c, unsigned int r) {
 			}
 			sb.str(std::string());
 		}
-		std::cout << " " << i << "\n  ";
+		std::cout << " " << i << "\n   ";
 		for (unsigned int j = 0; j < COLS; j++) {
 			std::cout << "+---";
 		}
-		std::cout << "+ \n";
+		std::cout << "+ \n ";
 	}
 	std::cout << "    ";
 	for (unsigned int i = 0; i < COLS; i++) {

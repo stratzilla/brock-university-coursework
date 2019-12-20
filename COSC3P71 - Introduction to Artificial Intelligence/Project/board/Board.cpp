@@ -324,7 +324,7 @@ int Board::getAllPieceValues(bool c) {
 			}
 		}
 	}
-	return ((c ? 1 : -1) * count);
+	return count;
 }
 
 /**
@@ -343,7 +343,7 @@ unsigned int Board::getPawnControl(bool c) {
 			}
 		}
 	}
-	return ((c ? 1 : -1) * count);
+	return count;
 }
 
 // method to print the game board to console

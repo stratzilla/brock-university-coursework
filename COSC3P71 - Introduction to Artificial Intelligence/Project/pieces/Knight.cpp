@@ -53,7 +53,7 @@ std::vector<Move> Knight::getMoves(Board* b, unsigned int c, unsigned int r) {
 			Tile possibleMove = (*b)(x, y); // get the tile
 			if (possibleMove) { // if occupied
 				// if capturing piece
-				if (possibleMove.getPiece().getColor() != getColor()) {
+				if (possibleMove.getPiece().getColor() != color) {
 					// valid move
 					moveList.push_back(Move(c, r, x, y));
 				}

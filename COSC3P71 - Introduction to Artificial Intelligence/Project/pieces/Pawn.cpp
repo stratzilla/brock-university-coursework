@@ -64,8 +64,8 @@ std::vector<Move> Pawn::getMoves(Board* b, unsigned int c, unsigned int r) {
 			bool v = (i == 2 || i == 3);
 			// check if open
 			if (v && possibleMove) { // if occupied
-				// check if capturable piece
-				if (possibleMove.getPiece().getColor() != getColor()) {
+				// if capturing piece
+				if (possibleMove.getPiece().getColor() != color) {
 					// valid move
 					moveList.push_back(Move(c, r, x, y));
 				}

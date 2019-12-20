@@ -221,7 +221,7 @@ bool Board::determineStalemate(bool c) {
  */
 bool Board::determineCheck(bool c) {
 	// get all moves of opponent
-	std::vector<Move> moveList = getAllMoves(c);
+	std::vector<Move> moveList = getAllNonKingMoves(c);
 	// for each of those moves
 	for (unsigned int i = 0; i < moveList.size(); i++) {
 		// compare the destination to see if it coincides with king
@@ -282,58 +282,6 @@ std::vector<Move> Board::getAllNonKingMoves(bool c) {
 }
 
 /**
- * method to count the piece values of all pieces
- * @param c - the color to check pieces for values
- * @return - the total value of those colored pieces
- */
-int Board::getAllPieceValues(bool c) {
-	int count = 0;
-	for (unsigned int i = 0; i < COLS; i++) {
-		for (unsigned int j = 0; j < ROWS; j++) {
-			// if piece exists and right color
-			if ((*this)(j, i) && (*this)(j, i).getPiece().getColor() == c) {
-				count += (*this)(j, i).getPiece().getValue();
-			}
-		}
-	}
-	return count;
-}
-
-/**
- * method to determine pawn control
- * @param c - the color to check for
- * @return - the total pawn control
- */
-unsigned int Board::getPawnControl(bool c) {
-	unsigned int count = 0;
-	for (unsigned int i = 0; i < COLS; i++) {
-		for (unsigned int j = 0; j < ROWS; j++) {
-			// if piece exists and is pawn
-			if ((*this)(j, i) && (*this)(j, i).getPiece().getType() == ((c) ? 'P' : 'p')) {
-				// control is the rank of the pawn
-				count += (c ? i : 8-i);
-			}
-		}
-	}
-	return count;
-}
-
-/**
- * method to count the total number of pieces
- * @return - the total number of pieces on the board
- */
-unsigned int Board::getTotalPieceCount() {
-	unsigned int count = 0;
-	for (unsigned int i = 0; i < COLS; i++) {
-		for (unsigned int j = 0; j < COLS; j++) {
-			// if piece exists
-			if ((*this)(j, i)) { count++; }
-		}
-	}
-	return count;
-}
-
-/**
  * method to find all paths possible
  * @param c - the color to look for
  * @return - a list of moves for player
@@ -359,6 +307,43 @@ std::vector<Move> Board::getAllPaths(bool c) {
 		}
 	}
 	return pathList;
+}
+
+/**
+ * method to count the piece values of all pieces
+ * @param c - the color to check pieces for values
+ * @return - the total value of those colored pieces
+ */
+int Board::getAllPieceValues(bool c) {
+	int count = 0;
+	for (unsigned int i = 0; i < COLS; i++) {
+		for (unsigned int j = 0; j < ROWS; j++) {
+			// if piece exists and right color
+			if ((*this)(j, i) && (*this)(j, i).getPiece().getColor() == c) {
+				count += (*this)(j, i).getPiece().getValue();
+			}
+		}
+	}
+	return ((c ? 1 : -1) * count);
+}
+
+/**
+ * method to determine pawn control
+ * @param c - the color to check for
+ * @return - the total pawn control
+ */
+unsigned int Board::getPawnControl(bool c) {
+	unsigned int count = 0;
+	for (unsigned int i = 0; i < COLS; i++) {
+		for (unsigned int j = 0; j < ROWS; j++) {
+			// if piece exists and is pawn
+			if ((*this)(j, i) && (*this)(j, i).getPiece().getType() == ((c) ? 'P' : 'p')) {
+				// control is the rank of the pawn
+				count += (c ? i : 8-i);
+			}
+		}
+	}
+	return ((c ? 1 : -1) * count);
 }
 
 // method to print the game board to console

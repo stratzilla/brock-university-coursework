@@ -12,7 +12,6 @@ class Computer : public Player {
 		unsigned int depth;
 		unsigned int evalCount;
 		const static unsigned int BUFFER = 3;
-		Move bestMove;
 		std::vector<std::string> moveQueue;
 		
 		// private member methods
@@ -23,7 +22,7 @@ class Computer : public Player {
 		int getMobility(Board*);
 		int getPawns(Board*);
 		void preventSelfCheck(std::vector<Move>&);
-		void printData(int);
+		void printData(int, unsigned int);
 		
 		// accessor methods
 		unsigned int getDepth();

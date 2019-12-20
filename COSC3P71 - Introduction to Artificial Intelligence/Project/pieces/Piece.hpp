@@ -10,12 +10,14 @@ class Board;
  * base class for derived pieces
  */
 class Piece {
-	private:
-		char type; // what kind of piece it is
 	protected:
 		// to avoid magic numbers: contain number of rows/cols
 		const static unsigned int ROWS = 8, COLS = 8;
-		bool hasMoved; // whether piece has moved or not (K, R)
+		
+		bool hasMoved; // whether piece has moved or not (K, R)		
+		bool color; // the color of the piece
+		unsigned int value; // the value of the piece
+		char type; // what kind of piece it is
 		
 		// protected member methods
 		bool checkInBounds(unsigned int, unsigned int);
@@ -26,9 +28,6 @@ class Piece {
 	
 		// likewise to avoid magic numbers: quantify which color is what
 		const static bool WHITE = true, BLACK = false;
-		
-		bool color; // the color of the piece
-		unsigned int value; // the value of the piece
 		
 		// public member methods
 		virtual std::vector<Move> getMoves(Board*, unsigned int, unsigned int);

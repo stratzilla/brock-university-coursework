@@ -108,22 +108,29 @@ std::vector<Move> King::getMoves(Board* b, unsigned int c, unsigned int r) {
 		}
 	}
 	// remove moves that would otherwise put king into check
-	removeCheckedMoves(b, moveList);
+	removeIllegalMoves(b, moveList);
 	return moveList;
 }
 
 /**
- * method to remove moves that would put king into check
+ * method to remove moves that would be illegal
  * @param b - the board the piece is on
  */
-void King::removeCheckedMoves(Board* b, std::vector<Move> &m) {
+void King::removeIllegalMoves(Board* b, std::vector<Move> &m) {
 	std::vector<int> indexes; // so the indices don't get clobbered
 	// find all moves an opponent could make
 	std::vector<Move> moveList = b->getAllNonKingMoves(getColor());
 	for (unsigned int i = 0; i < m.size(); i++) {
 		for (unsigned int j = 0; j < moveList.size(); j++) {
-			// if destination of opponent move is within king move list
-			if (m[i] >= moveList[j]) { indexes.insert(indexes.begin(), i); break; }
+			/**
+			 * if move would result in being in way of another piece
+			 * or if move would bring king next to king
+			 * or if move would result in check
+			 */
+			if ((m[i] >= moveList[j]) || (checkSurroundingKings(b, m[i]))) {
+				indexes.insert(indexes.begin(), i);
+				break;
+			}
 		}
 	}
 	// remove the moves that would put king in check
@@ -149,20 +156,6 @@ void King::removeCheckedMoves(Board* b, std::vector<Move> &m) {
 		m.erase(m.begin() + indexes[i]);
 	}
 	indexes.clear();
-	/**
-	 * none of the above handles kings next to kings, so use
-	 * a separate handler for this. Cannot verify check
-	 * status without infinite recursion, so a new method is needed
-	 */
-	for (unsigned int i = 0; i < m.size(); i++) {
-		if (checkSurroundingKings(b, m[i].getDestC(), m[i].getDestR())) {
-			indexes.insert(indexes.begin(), i);
-		}
-	}
-	// remove the moves that would put king next to king
-	for (unsigned int i = 0; i < indexes.size(); i++) {
-		m.erase(m.begin() + indexes[i]);
-	}
 }
 
 /**
@@ -171,9 +164,9 @@ void King::removeCheckedMoves(Board* b, std::vector<Move> &m) {
  * @param c, r - the coordinate to check
  * @return - whether that move has surrounding kings
  */
-bool King::checkSurroundingKings(Board* b, unsigned int c, unsigned int r) {
+bool King::checkSurroundingKings(Board* b, Move m) {
 	for (unsigned int i = 0; i < MOVE_NUM; i++) {
-		int x = c, y = r;
+		int x = m.getDestC(), y = m.getDestR();
 		switch(i) {
 			// functionality is essentially rook + bishop but length 1
 			case 0: y += MIN_MOVE; break; // north

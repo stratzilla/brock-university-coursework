@@ -65,8 +65,8 @@ Move Computer::negamaxHandler() {
 		copy->movePiece(moveList[i]); // make move on copy
 		// find value of that move
 		int value = negamax(copy, getDepth(), INT_MIN, INT_MAX, !getColor());
-		// if move has same worth
-		if (value == bestMoveValue ) {
+		// if same worth or not enough to fill queue
+		if (value == bestMoveValue || moveList.size() <= BUFFER) {
 			// add it to the collection
 			bestMoves.push_back(moveList[i]);
 		} else if (value > bestMoveValue) {
@@ -76,7 +76,7 @@ Move Computer::negamaxHandler() {
 			bestMoves.push_back(moveList[i]);
 		}
 	}
-	printData(bestMoveValue); // show some data
+	printData(bestMoveValue, bestMoves.size()); // show some data
 	/**
 	 * because some moves will be worth the same as others, we'll have
 	 * a collection of the best moves here. We'll choose one stochastically
@@ -116,8 +116,10 @@ int Computer::negamax(Board* b, unsigned int d, int alf, int bet, bool p) {
 	if (b->determineCheckmate(p)) { return INT_MAX; }
 	// consider a stalemate is better than losing
 	if (b->determineStalemate(p)) { return 0; }
+	// putting another person in check is beneficial
+	if (b->determineCheck(p)) { return (p ? 1 : -1) * evalBoard(b) * 10; }
 	int value = INT_MIN; // initially minimum (will overwrite)
-	std::vector<Move> moveList = b->getAllMoves(!p); // get moves
+	std::vector<Move> moveList = b->getAllMoves(!p); // get moves of opponent
 	for (unsigned int i = 0; i < moveList.size(); i++) {
 		Board* copy = new Board(*b); // make a new board copy
 		copy->movePiece(moveList[i]); // make move on copy
@@ -151,7 +153,7 @@ int Computer::evalBoard(Board* b) {
 	 * some coefficients to balance the weights
 	 * of the various metrics about the board
 	 */
-	int c1 = 15, c2 = 3, c3 = 6;
+	int c1 = 5, c2 = 1, c3 = 2;
 	// evaluation is a function of material, board control, pawn control
 	return c1*value + c2*mobility + c3*pawns;
 }
@@ -220,8 +222,11 @@ void Computer::preventSelfCheck(std::vector<Move>& m) {
  * the AI gave the board
  * @param s - the score
  */
-void Computer::printData(int s) {
+void Computer::printData(int s, unsigned int m) {
 	std::cout << "\n" << evalCount << " game states evaluated.\n";
+	if (m > 1) {
+		std::cout << "Found " << m << " equivalent moves; chose one stochastically.\n";
+	}
 	std::cout << (getColor() ? "White" : "Black");
 	std::cout << " chose a move with score " << s << ".\n";
 	evalCount = 0;

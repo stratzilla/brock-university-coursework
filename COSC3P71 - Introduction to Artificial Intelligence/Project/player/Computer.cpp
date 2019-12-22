@@ -64,7 +64,7 @@ Move Computer::negamaxHandler() {
 		Board* copy = new Board(*getBoard()); // make a new board copy
 		copy->movePiece(moveList[i]); // make move on copy
 		// find value of that move
-		int value = negamax(copy, getDepth(), INT_MIN, INT_MAX, !getColor());
+		int value = -negamax(copy, getDepth()-1, INT_MIN, INT_MAX, !getColor());
 		// if same worth or not enough to fill queue
 		if (value == bestMoveValue || moveList.size() <= BUFFER) {
 			// add it to the collection
@@ -76,7 +76,14 @@ Move Computer::negamaxHandler() {
 			bestMoves.push_back(moveList[i]);
 		}
 	}
-	printData(bestMoveValue, bestMoves.size()); // show some data
+	/** 
+	 * I was unable to catch instances where the movelist is zero, leading to null move
+	 * so consider this the AI forfeiting
+	 */
+	if (bestMoves.size() == 0) {
+		std::cout << (getColor() ? "White" : "Black") << " has forfeited the game.\n\n";
+		exit(1);
+	}
 	/**
 	 * because some moves will be worth the same as others, we'll have
 	 * a collection of the best moves here. We'll choose one stochastically
@@ -85,6 +92,7 @@ Move Computer::negamaxHandler() {
 	moveQueue.push_back(theBestMove.stateMove()); // add best move to buffer
 	// keep buffer size consistent
 	if (moveQueue.size() > BUFFER) { moveQueue.erase(moveQueue.begin()); }
+	printData(bestMoveValue, bestMoves.size()); // show some data
 	return theBestMove;
 }
 
@@ -106,7 +114,7 @@ int Computer::negamax(Board* b, unsigned int d, int alf, int bet, bool p) {
 	evalCount++; // increment count to display positions evaluated
 	// terminal case would be stalemate or checkmate
 	if (d == 0) { // base recursive case
-		return (p ? 1 : -1) * evalBoard(b); // return that board's evaluation
+		return (p == getColor() ? 1 : -1) * evalBoard(b); // return that board's evaluation
 	}
 	/**
 	 * consider a checkmate as best possible configuration
@@ -117,7 +125,7 @@ int Computer::negamax(Board* b, unsigned int d, int alf, int bet, bool p) {
 	// consider a stalemate is better than losing
 	if (b->determineStalemate(p)) { return 0; }
 	// putting another person in check is beneficial
-	if (b->determineCheck(p)) { return (p ? 1 : -1) * evalBoard(b) * 10; }
+	if (b->determineCheck(p)) { return evalBoard(b) * 10; }
 	int value = INT_MIN; // initially minimum (will overwrite)
 	std::vector<Move> moveList = b->getAllMoves(!p); // get moves of opponent
 	for (unsigned int i = 0; i < moveList.size(); i++) {
@@ -146,53 +154,16 @@ int Computer::evalBoard(Board* b) {
 	 * then evaluation considers the total board
 	 * value plus the board control plus pawn control
 	 */
-	int value = getValues(b); // material worth of board
-	int mobility = getMobility(b); // board control
-	int pawns = getPawns(b); // pawn control
+	int value = b->getAllPieceValues(getColor());
+	int mobility = b->getAllMobilityValues(getColor()); // board control
+	int pawns = b->getAllPawnValues(getColor()); // pawn control
 	/**
 	 * some coefficients to balance the weights
 	 * of the various metrics about the board
 	 */
-	int c1 = 5, c2 = 1, c3 = 2;
+	int c1 = 12, c2 = 1, c3 = 3;
 	// evaluation is a function of material, board control, pawn control
 	return c1*value + c2*mobility + c3*pawns;
-}
-
-/**
- * method to determine the value worth of a board
- * @param b - the board to evaluate
- * @return - total value according to AI
- */
-int Computer::getValues(Board *b) {
-	// tabulate total piece value of AI pieces
-	unsigned int ownValues = b->getAllPieceValues(getColor());
-	// tabulate total piece value of Human pieces
-	unsigned int oppValues = b->getAllPieceValues(!getColor());
-	// the values of a board according to AI is (AI-Human)
-	return (ownValues - oppValues);
-}
-
-/**
- * method to determine the mobility worth of a board
- * @param b - the board to evaluate
- * @return - total mobility according to AI
- */
-int Computer::getMobility(Board *b) {
-	// tabulate total number of moves AI can make
-	unsigned int ownMoves = b->getAllMoves(!getColor()).size();
-	// tabulate total number of moves Human can make
-	unsigned int oppMoves = b->getAllMoves(getColor()).size();
-	// the mobility of a board according to AI is (AI-Human)
-	return (ownMoves - oppMoves);
-}
-
-/**
- * method to determine pawn worth of a board
- * @param b - the board to evaluate
- * @return - total pawn worth
- */
-int Computer::getPawns(Board *b) {
-	return b->getPawnControl(getColor());
 }
 
 /**

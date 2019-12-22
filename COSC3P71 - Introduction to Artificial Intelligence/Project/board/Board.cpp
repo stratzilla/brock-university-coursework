@@ -211,7 +211,15 @@ bool Board::determineStalemate(bool c) {
 			}
 		}
 	}
-	return false; // if in check, can't be stalemate
+	// a stalemate also occurs were only the two kings on board
+	int countKings = 0;
+	for (unsigned int i = 0; i < COLS; i++) {
+		for (unsigned int j = 0; j < ROWS; j++) {
+			if ((*this)(j, i) && (*this)(j, i).getPiece().getType() == 'k') { countKings++; }
+			if ((*this)(j, i) && (*this)(j, i).getPiece().getType() == 'K') { countKings--; }
+		}
+	}
+	return (countKings != 0);
 }
 
 /**
@@ -318,9 +326,35 @@ int Board::getAllPieceValues(bool c) {
 	int count = 0;
 	for (unsigned int i = 0; i < COLS; i++) {
 		for (unsigned int j = 0; j < ROWS; j++) {
-			// if piece exists and right color
-			if ((*this)(j, i) && (*this)(j, i).getPiece().getColor() == c) {
-				count += (*this)(j, i).getPiece().getValue();
+			if ((*this)(j, i)) {
+				// if piece exists and right color
+				if ((*this)(j, i).getPiece().getColor() == c) {
+					count += (*this)(j, i).getPiece().getValue();
+				} else {
+					count -= (*this)(j, i).getPiece().getValue();
+				}
+			}
+		}
+	}
+	return count;
+}
+
+/**
+ * method to find mobility value of the board
+ * @param c - the color to check for
+ * @return - total mobility score
+ */
+int Board::getAllMobilityValues(bool c) {
+	int count = 0;
+	for (unsigned int i = 0; i < COLS; i++) {
+		for (unsigned int j = 0; j < ROWS; j++) {
+			if ((*this)(j, i)) {
+				// if piece exists and right color
+				if ((*this)(j, i).getPiece().getColor() == c) {
+					count += (*this)(j, i).getPiece().getMoves(this, j, i).size();
+				} else {
+					count -= (*this)(j, i).getPiece().getMoves(this, j, i).size();
+				}
 			}
 		}
 	}
@@ -332,14 +366,21 @@ int Board::getAllPieceValues(bool c) {
  * @param c - the color to check for
  * @return - the total pawn control
  */
-unsigned int Board::getPawnControl(bool c) {
-	unsigned int count = 0;
+int Board::getAllPawnValues(bool c) {
+	int count = 0;
 	for (unsigned int i = 0; i < COLS; i++) {
 		for (unsigned int j = 0; j < ROWS; j++) {
-			// if piece exists and is pawn
-			if ((*this)(j, i) && (*this)(j, i).getPiece().getType() == ((c) ? 'P' : 'p')) {
-				// control is the rank of the pawn
-				count += (c ? i : 8-i);
+			if ((*this)(j, i)) {
+				// if piece exists and right color
+				if ((*this)(j, i).getPiece().getColor() == c) {
+					if ((*this)(j, i).getPiece().getType() == 'P' || (*this)(j, i).getPiece().getType() == 'p') {
+						count += (c ? i-1 : 6-i);
+					}
+				} else {
+					if ((*this)(j, i).getPiece().getType() == 'P' || (*this)(j, i).getPiece().getType() == 'p') {
+						count -= (c ? 6-i : i-1);
+					}
+				}
 			}
 		}
 	}

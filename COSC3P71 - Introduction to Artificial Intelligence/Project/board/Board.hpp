@@ -40,7 +40,8 @@ class Board {
 		bool determineStalemate(bool);
 		bool determineCheck(bool);
 		int getAllPieceValues(bool);
-		unsigned int getPawnControl(bool);
+		int getAllMobilityValues(bool);
+		int getAllPawnValues(bool);
 		
 		// accessor methods
 		bool getCurrentPlayer();

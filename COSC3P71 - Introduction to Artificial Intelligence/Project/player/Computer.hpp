@@ -18,9 +18,6 @@ class Computer : public Player {
 		Move negamaxHandler();
 		int negamax(Board*, unsigned int, int, int, bool);
 		int evalBoard(Board*);
-		int getValues(Board*);
-		int getMobility(Board*);
-		int getPawns(Board*);
 		void preventSelfCheck(std::vector<Move>&);
 		void printData(int, unsigned int);
 		

@@ -127,7 +127,7 @@ void King::removeIllegalMoves(Board* b, std::vector<Move> &m) {
 			 * or if move would bring king next to king
 			 * or if move would result in check
 			 */
-			if ((m[i] >= moveList[j]) || (checkSurroundingKings(b, m[i]))) {
+			if (m[i] >= moveList[j]) {
 				indexes.insert(indexes.begin(), i);
 				break;
 			}
@@ -156,6 +156,15 @@ void King::removeIllegalMoves(Board* b, std::vector<Move> &m) {
 		m.erase(m.begin() + indexes[i]);
 	}
 	indexes.clear();
+	for (unsigned int i = 0; i < m.size(); i++) {
+		if (checkSurroundingKings(b, m[i])) {
+			indexes.insert(indexes.begin(), i);
+		}
+	}
+	for (unsigned int i = 0; i < indexes.size(); i++) {
+		m.erase(m.begin() + indexes[i]);
+	}
+	indexes.clear();
 }
 
 /**
@@ -179,8 +188,11 @@ bool King::checkSurroundingKings(Board* b, Move m) {
 			case 7: x -= MIN_MOVE; y += MIN_MOVE; break; // north-west
 		}
 		// check if move is in bounds, has a piece, and piece is opposing king
-		if (checkInBounds(x, y) && (*b)(x, y) && ((*b)(x, y).getPiece().getType() == (getColor() ? 'k' : 'K'))) {
-			return true; // the move would bring king next to king = illegal
+		if (checkInBounds(x, y) && (*b)(x, y) && (*b)(x, y).getPiece().getColor() != getColor()) {
+			char king = (*b)(x, y).getPiece().getType();
+			if (king == 'k' || king == 'K') {
+				return true; // the move would bring king next to king = illegal
+			}
 		}
 	}
 	return false; // no surrounding kings

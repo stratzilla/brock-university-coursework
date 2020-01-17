@@ -1,3 +1,5 @@
+#!/usr/bin/gnuplot -persist
+
 set terminal postscript eps # set output type
 set output "plotted.eps" # set output name
 set border 3 # set border size

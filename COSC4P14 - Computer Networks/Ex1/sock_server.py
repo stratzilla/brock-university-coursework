@@ -9,7 +9,7 @@ if len(sys.argv) != 3:
 	print("\nExecute the script as below:")
 	print(" $ ./sock_server.py <IP Address> <Port>")
 	print("For example: `./sock_server.py 127.0.0.1 8008`.\n")
-	sys.exit(1) # exit with code denoting abnormality
+	sys.exit(1)
 
 SERVER = socket(AF_INET, SOCK_STREAM) # TCP
 IP_ADDRESS = str(sys.argv[1]) # IP address to connect to
@@ -51,13 +51,13 @@ def listen_incoming():
 		(client, address) = SERVER.accept()
 		print(f" * {address} has connected.")
 		Thread(target=client_thread, args=(client, )).start()
-		
+
 def client_thread(c):
 	"""
 	Creates a thread per each client.
-	
+
 	Parameter:
-	c -- client socket connection 
+	c -- client socket connection
 	"""
 	username = c.recv(RECV_SIZE).decode("utf8") # get username
 	CLIENT_LIST[c] = username # add to client list
@@ -80,11 +80,11 @@ def client_thread(c):
 		else: # vanilla message
 			message = user_string + message
 			send_all(message)
-	
+
 def send_all(m):
 	"""
 	Sends a message to all connected clients.
-	
+
 	Parameters:
 	m -- the message to send
 	"""

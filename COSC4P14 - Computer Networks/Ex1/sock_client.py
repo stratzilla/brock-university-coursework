@@ -32,10 +32,10 @@ def set_up_client():
 	except ConnectionRefusedError: # if no server active
 		print("failed!\n")
 		ACTIVE = False
-		return		
+		return
 	print("connected!")
 	print(f"Client connected to server at {IP_ADDRESS}.")
-	
+
 def start_io_loop():
 	"""
 	Initializes send/receive loop threads.
@@ -48,7 +48,7 @@ def start_io_loop():
 		# wait for threads to finish before rejoining main thread
 		RECEIVE_THREAD.join()
 		SEND_THREAD.join()
-	
+
 def send_message():
 	"""
 	Sending message loop.

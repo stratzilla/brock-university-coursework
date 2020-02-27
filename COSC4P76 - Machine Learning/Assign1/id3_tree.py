@@ -12,13 +12,17 @@ except ImportError: # if not found
 	exit(1)
 
 if len(argv) != 4: # if inappropriate arguments
-	print("\nExecute the script as below:\n")
-	print(" $ ./id3_tree_train.py <File> <Holdout> <Print>\n")
-	print("Where the arguments are as below:")
+	print("\nExecute the script as one of the below:\n")
+	print(" $ ./id3_tree.py <File> <Holdout> <Print>")
+	print(" $ ./id3_tree.py <Train> <Test> <Print>\n")
+	print("In the former, a single data set is used for both train/test:")
 	print(" <File> -- the .CSV file of examples")
 	print(" <Holdout> -- the proportion of training examples (0.00..1.00)")
 	print(" <Print> -- whether to print tree (1 = T, 0 = F)\n")
-	print("e.g. holdout of 0.70 means a 70-30 split for train/test data.\n")
+	print("For the latter, separate data sets are used instead:")
+	print(" <Train> -- the .CSV file of training examples")
+	print(" <Test> -- the .CSV file of testing examples")
+	print(" <Print> -- whether to print tree (1 = T, 0 = F)\n")
 	exit(1)
 	
 def id3(df, t, f):
@@ -155,9 +159,9 @@ def load_csv(f):
 	try:
 		df = pd.read_csv(f, dtype=str) # open file as parse CSV into dataframe
 	except:
-		print("\nData could not be loaded, ensure the argument is correct.\n")
+		print("\nData could not be loaded, ensure the arguments are correct.\n")
 		exit(1)
-	print(f"\n{f} was loaded into dataframe.\n")
+	print(f"{f} was successfully loaded.")
 	return df
 
 def holdout(df, p):
@@ -181,12 +185,13 @@ def holdout(df, p):
 			exit(1)
 		return train, test
 	else:
-		print("The proportion of training examples must be (0.00..1.00).\n")
+		print("\nThe proportion of training examples must be (0.00..1.00).\n")
 		exit(1)
 
 def find_accuracy(dt, t):
 	"""
 	Determines accuracy of the system.
+	Accuracy = (1 - error) = (TP+TN)/(TP+TN+FP+FN)
 	
 	Parameter:
 	dt -- the decision tree
@@ -197,9 +202,9 @@ def find_accuracy(dt, t):
 	"""
 	correct, total = 0, 0
 	for _, e in t.iterrows():
-		total += 1
+		total += 1 # TP+TN+FP+FN
 		if e[len(e)-1] == predict_decision(dt, e):
-			correct += 1
+			correct += 1 # TP+TN
 	return round(((correct/total)*100), 1)
 
 def predict_decision(dt, e):
@@ -256,9 +261,26 @@ def print_statistics(dt, t, tr, te, trs, tes):
 	print(f"Was able to classify {tr}% of training data.")
 	print(f"Was able to classify {te}% of testing data.\n")
 
+def get_data():
+	"""
+	Load CSV data depending on holdout or not.
+	
+	Return:
+	train -- a set of training examples
+	test -- a set of testing examples
+	"""
+	try: # singular set of examples
+		h = float(argv[2])
+		train, test = holdout(load_csv(argv[1]), h)
+		print(f"\nUsing holdout style training, {h*100}% training data.")
+	except ValueError: # separate train/test examples
+		train, test = load_csv(argv[1]), load_csv(argv[2])
+		print("\nUsing separate training and testing sets.")
+	return train, test
+
 if __name__ == '__main__':
-	df = load_csv(argv[1]) # load CSV into dataframe
-	train, test = holdout(df, float(argv[2])) # get train/test split
+	print()
+	train, test = get_data()
 	decision_name = train.columns[len(train.columns)-1]
 	start_time = time.time()
 	dt = id3(train, decision_name, train.columns[:-1]) # get decision tree

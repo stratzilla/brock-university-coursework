@@ -142,7 +142,7 @@ public class mitm {
 	 */
 	public static void main(String[] args) {
 		setup(); // setup the sockets
-	serverLoop(); // launch the server
+		serverLoop(); // launch the server
 		System.exit(0); // exit with normal exit code
 	}
 }

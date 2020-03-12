@@ -7,9 +7,9 @@ public class mitm {
 	private static final int OUTS_PORT = 53; // to send/recv from Google
 	private static final int P_SIZE = 512; // packet size, found to be <512
 	// list of blocked IP addresses
-    private static final String[] BLOCKED =  {"50.28.51.184", "208.80.154.224"};
+	private static final String[] BLOCKED =  {"50.28.51.184", "208.80.154.224"};
 	// where to redirect the IP addresses
-    private static final String REDIREC = "139.157.100.6";	
+	private static final String REDIREC = "139.157.100.6";	
 	private static final String ROUTE = "8.8.8.8"; // google IP
 	
 	/**
@@ -47,7 +47,7 @@ public class mitm {
 					System.out.print("Swapping IP addresses... ");
 					b = ipSubstitution(p); // perform IP switching
 					System.out.print("done!\n");
-				} else { continue; } // otherwise halt current frame
+				} else { b = p.getData(); } // otherwise do not substitute
 				System.out.print("Sending DNS response back to source... ");
 				// finish up
 				SRC.send(new DatagramPacket(b, p.getLength(), addr, port));
@@ -140,9 +140,9 @@ public class mitm {
 	/**
 	 * Main driver
 	 */
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 		setup(); // setup the sockets
-        serverLoop(); // launch the server
+		serverLoop(); // launch the server
 		System.exit(0); // exit with normal exit code
-    }
+	}
 }

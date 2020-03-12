@@ -43,8 +43,8 @@ else:
 		EPOCHS, SLICES = int(argv[5]), float(argv[6])
 		H_STRU = [int(i) for i in argv[2].split('-')]
 		H_S, A_TYPE = argv[2], argv[1].upper()
-		if 0.00 > L_RATE > 1.00 \
-		or 0.00 > M_RATE > 1.00: # if globals not in range
+		if 0.00 > L_RATE > 10.00 \
+		or 0.00 > M_RATE > 10.00: # if globals not in range
 			raise Error
 		if A_TYPE not in ["LOG", "TANH"]:
 			raise Error
@@ -127,19 +127,19 @@ def forward_pass(nn, x):
 	x -- a vector of inputs
 	"""
 	# to not clobber x, save copy of inputs, init list for outputs
-	layer_inputs, layer_outputs = x, []
+	l_in, l_out = x, []
 	for nl in nn: # for each neural layer
 		for n in nl: # for each neuron in layer
-			n['o'] = activation_function(summing_function(n['w'], layer_inputs))
-			layer_outputs.append(n['o']) # append to list of outputs
+			n['o'] = activation_function(summing_function(n['w'], l_in))
+			l_out.append(n['o']) # append to list of outputs
 		# to propagate into further layers, also reset to default
-		layer_inputs, layer_outputs = layer_outputs, []
-	return layer_inputs
+		l_in, l_out = l_out, []
+	return l_in
 
 def backward_pass(nn, t):
 	"""
 	Backwards pass through network layers.
-	Propagates error through the layers to find deltas over e.
+	Propagates error through the layers to find deltas over t.
 	
 	Parameter:
 	nn -- the neural network structure
@@ -209,8 +209,9 @@ def tanh_function(z, derivative=False):
 
 def reset_neurons(nn):
 	"""
-	Neuron reseter.
+	Neuron resetter.
 	Resets the neural outputs to zero. Deltas are reseted in new init of deltas
+	Prevents some overflow issue with activation functions and aggregate outputs
 	
 	Parameter:
 	nn -- the neural network structure
@@ -304,7 +305,6 @@ def load_csv(f1, f2):
 	Parameter:
 	f1 -- training filename
 	f2 -- testing filename
-	s -- proportion of full data to use (0..1)
 	"""
 	train = pd.read_csv(f1, header=None).sample(frac=SLICES).values.tolist()
 	test = pd.read_csv(f2, header=None).sample(frac=SLICES).values.tolist()
@@ -328,6 +328,6 @@ if __name__ == '__main__':
 	feat, clas = len(train[0][:-1]), len(np.unique([c[-1] for c in train]))
 	# print to console params
 	print_params(train_filename, test_filename, train, test, feat, H_S, clas)
-	nn = setup_network(feat, H_STRU, clas)	
+	nn = setup_network(feat, H_STRU, clas) # set up the network
 	sgd(nn, clas, train, test) # make the network and perform sgd on it
 	exit(0)

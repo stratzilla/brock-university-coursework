@@ -1,49 +1,49 @@
 #!/usr/bin/env python3
 
-import sys
+from sys import argv, exit
 from math import sqrt, inf
-import os.path
+from random import choice
+from os.path import isfile, isdir
+from os import system
 
 try:
 	import pandas as pd # some containerization for input data
-	import numpy as np # random
 	import matplotlib.pyplot as plt # plotting
 except ImportError:
 	print("\nModules could not be loaded.")
 	print("Ensure module dependencies are installed before execution.\n")
-	sys.exit(1)
+	exit(1)
 
 def execution_instructions():
 	"""Reminds user how to execute on error."""
 	print("\nExecute the script as the below:")
-	print(" $ ./k-means.py <File> <Type> <K> <Epochs> <Save>\n")
+	print(" $ ./k-means.py <File> <Type> <K> <Epochs>\n")
 	print("Where the following are the arguments:")
 	print(" <File> -- the data to perform k-means clustering upon")
 	print(" <Type> -- the type of metric space to use:")
 	print("        -- 1 - Euclidean Metric")
 	print("        -- 2 - Manhattan Metric")
 	print("        -- 3 - Chebyshev Metric")
-	print(" <K> -- k-parameter, or how many clusters")
-	print(" <Epochs> -- how many iterations of k-means to perform")
-	print(" <Save> -- (optional) filename to save plot as\n")
-	print("If no argument is provided for <Save>, no plots will be made.")
-	print("Ensure <File> and <Save> point to valid files and directories.\n")
-	sys.exit(1)
+	print(" <K> -- k-parameter, or how many clusters [2, 25]")
+	print(" <Epochs> -- how many epochs for k-means to perform [1, 100]\n")
+	print("Each epoch frame will be saved as an image in `./plots/`.")
+	print("This directory will be made if it does not exist.\n")
+	exit(1)
 
 try:
-	if not 6 >= len(sys.argv) >= 5:
+	if len(argv) != 5:
 		raise ValueError
-	FILENAME = sys.argv[1]
-	if not os.path.isfile(FILENAME):
+	FILENAME = argv[1]
+	if not isfile(FILENAME):
 		raise FileNotFoundError
-	TYPE = int(sys.argv[2])
-	K_PARAM = int(sys.argv[3])
-	MAX_EPOCH = int(sys.argv[4])
+	TYPE = int(argv[2])
+	K_PARAM = int(argv[3])
+	MAX_EPOCH = int(argv[4])
 	OUTPUT = None
-	if not 3 >= TYPE >= 1 or K_PARAM < 1 or MAX_EPOCH < 1:
+	if not 3 >= TYPE >= 1 or 25 > K_PARAM < 2 or MAX_EPOCH < 1:
 		raise ValueError
-	if len(sys.argv) == 6:
-		OUTPUT = sys.argv[5]
+	if not isdir('./plots/'):
+		system('mkdir plots')
 except (ValueError, FileNotFoundError):
 	execution_instructions()
 
@@ -107,9 +107,9 @@ def k_means(epochs=MAX_EPOCH):
 	"""Performs the k-means clustering on the data.
 
 	The k-means algorithm generates centroids within a data set which are
-	initially uniformly random. Then, finds the nearest points to each centroid
-	and considers them members of that cluster. The centroids are then moved
-	where the new position is the mean position of each member point. The
+	maximally distant from each other. Then, finds the nearest points to each
+	centroid and considers them members of that cluster. The centroids are then
+	moved where the new position is the mean position of each member point. The
 	process of finding nearest membership points and moving centroids is
 	repeated over many epochs/iterations, eventually the centroids will converge
 	to the center of clusters within the data set.
@@ -117,14 +117,17 @@ def k_means(epochs=MAX_EPOCH):
 	Parameters:
 		epochs : how many iterations the algorithm should perform.
 	"""
-	points, x_bounds, y_bounds = load_data() # load data and find bounds
-	clusters = generate_centroids(points, x_bounds, y_bounds) # make centroids
-	for _ in range(epochs):
+	points = load_data()
+	clusters = initialize_centroids(points)
+	# below meant for saving each epoch as image
+	find_clusters(points, clusters)
+	plot_data(points, clusters, 0)
+	for i in range(epochs+1):
 		find_clusters(points, clusters)
 		move_centroids(points, clusters)
+		# below meant for saving each epoch as image
+		plot_data(points, clusters, i)
 	print(f"\nThe Dunn Index is: {dunn_index(points, clusters)}.\n")
-	if len(sys.argv) == 6:
-		plot_data(points, clusters)
 
 def dunn_index(points, clusters):
 	"""Calculates the Dunn Index of the clustering.
@@ -197,61 +200,32 @@ def find_clusters(points, clusters):
 	for p in points:
 		p.find_cluster(clusters)
 
-def generate_centroids(points, x, y, k=K_PARAM):
-	"""Generates centroids within the dataset at random.
+def initialize_centroids(points, k=K_PARAM):
+	"""Use k-means++ as initialization strategy for centroids.
 
-	Initially, a population of k random centroids are placed within the data to
-	eventually find clusters with.
+	Initializes centroid initial locations based on the distances between points
+	and previously found centroids. Ensures maximal distance is between
+	centroids which allows for a better k-means algorithm performance.
 
 	Parameters:
 		points : a list of Points.
-		x : the lower/upper bound for x-coordinate for centroid.
-		y : the lower/upper bound for y-coordinate for centroid.
-		k : how many centroids to generate.
+		k : how many centroids to place.
 
 	Returns:
-		A list of k centroids.
+		A list of centroids.
 	"""
-	def rand(bounds):
-		return np.random.uniform(bounds[0], bounds[1])
 	clusters = []
-	# initially centroids are randomly distributed
-	for _ in range(k):
-		clusters.append(Point(rand(x), rand(y)))
-	while check_div_zero(points, clusters):
-		# If a centroid were to have no nearest points, it will result in
-		# division-by-zero errors later. This is random and depends on centroid
-		# initial position. If a div-by-zero error were to occur, catch it here
-		# and reinitialize the centroids at new random positions. Repeat until
-		# no possibility of div-by-zero errors.
-		clusters = []
-		for _ in range(k):
-			clusters.append(Point(rand(x), rand(y)))
-	return clusters
-
-def check_div_zero(points, clusters):
-	"""Pre-emptively catch a division-by-zero error later.
-
-	Determines if a centroid has no nearest points by finding clusters for each
-	Point before the k-means algorithm.
-
-	Parameters:
-		points : a list of Points.
-		clusters : a list of cluster centroids.
-
-	Returns:
-		Whether there exists a centroid without any member points.
-	"""
-	find_clusters(points, clusters)
-	for c in clusters:
-		count = 0
+	clusters.append(choice(points)) # first centroid is random point
+	for _ in range(k - 1): # for other centroids
+		distances = []
 		for p in points:
-			if p.get_cluster() is c: # determine if centroid has points
-				count += 1
-		if count == 0: # if cluster has points, this won't be zero
-			return True # but if cluster doesn't, need to reinit as random
-		count = 0
-	return False
+			d = inf
+			for c in clusters: # find the minimal distance between p and c
+				d = min(d, distance(p, c))
+			distances.append(d)
+		# find maximum distance index from minimal distances
+		clusters.append(points[distances.index(max(distances))])
+	return clusters
 
 def move_centroids(points, clusters):
 	"""Repositions cluster centroids to the mean Point position.
@@ -278,41 +252,31 @@ def load_data(file=FILENAME):
 		file : filename of local file to parse Points from.
 
 	Returns:
-		A list of Points along with the upper/lower bounds for x,y-coordinates.
+		A list of Points.
 	"""
-	def min_max(t): # allows grabbing min/max values per column
-		return pd.Series(index=['min', 'max'], data=[t.min(), t.max()])
 	df = pd.read_csv(file, names=['x', 'y'], delimiter=r'\s+')
-	df_minmax = df.apply(min_max) # find minimum and maximum of each column
 	arr_points = []
 	# convert from pd df to Points, append to list
 	for _, d in df.iterrows():
 		arr_points.append(Point(d['x'], d['y']))
-	return (arr_points, df_minmax['x'], df_minmax['y'])
+	return arr_points
 
-def setup_plot():
-	"""Sets up the plot with some attributes.
-
-	Parameters:
-		file : loaded data filename to put in plot title.
-	"""
-	plt.figure('K-Means Clustering')
-	plt.xticks([])
-	plt.yticks([])
-	plt.margins(0.05, 0.05)
-
-def plot_data(points, clusters, file=OUTPUT):
+def plot_data(points, clusters, epoch):
 	"""Plots data and cluster centroids.
 
 	Parameters:
 		points : a list of Points.
 		clusters : a list of cluster centroids.
-		file : filename to save plot as.
+		epoch : iteration of the k-means algorithm.
 	"""
-	setup_plot()
+	plt.xticks([])
+	plt.yticks([])
+	plt.margins(0.05, 0.05)
 	colors = ['red', 'lime', 'blue', 'yellow', 'orange', 'deeppink', \
 		'olivedrab', 'aqua', 'thistle', 'mediumvioletred', 'plum', \
-		'burlywood', 'maroon', 'mediumspringgreen', 'dodgerblue']
+		'burlywood', 'maroon', 'mediumspringgreen', 'dodgerblue', \
+		'rebeccapurple', 'lightcoral', 'darkslategrey', 'firebrick', 'bisque', \
+		'darkseagreen', 'fuchsia', 'turquoise', 'steelblue', 'chocolate']
 	for c, i in zip(clusters, range(len(clusters))):
 		point_x, point_y = [], []
 		for p in points:
@@ -325,10 +289,11 @@ def plot_data(points, clusters, file=OUTPUT):
 	for c, i in zip(clusters, range(len(clusters))):
 		x, y = c.get_coord()
 		plt.scatter(x, y, c=colors[i], s=100, marker='X', lw=1, ec='k')
-	plt.savefig(file, bbox_inches='tight', pad_inches=0.1) # save file
-	plt.show()
+	save_destination = f"./plots/{epoch:03d}.png"
+	plt.savefig(save_destination, bbox_inches='tight', pad_inches=0.1)
 	plt.clf()
 
 if __name__ == '__main__':
 	k_means()
-	sys.exit(0)
+	system("convert -delay 100 ./plots/*.png ./plots/animated.gif")
+	exit(0)

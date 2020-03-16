@@ -121,7 +121,7 @@ def k_means(epochs=MAX_EPOCH):
 	clusters = initialize_centroids(points)
 	find_clusters(points, clusters)
 	plot_data(points, clusters, 0)
-	for i in range(epochs+1):
+	for i in range(epochs):
 		find_clusters(points, clusters)
 		move_centroids(points, clusters)
 		plot_data(points, clusters, i+1)
@@ -283,7 +283,8 @@ def plot_data(points, clusters, epoch):
 			x, y = p.get_coord()
 			point_x.append(x)
 			point_y.append(y)
-		plt.scatter(point_x, point_y, c=colors[i], s=2, marker='o', lw='1')
+		point_color = 'k' if epoch == 0 else colors[i]
+		plt.scatter(point_x, point_y, c=point_color, s=2, marker='o', lw='1')
 	for c, i in zip(clusters, range(len(clusters))):
 		x, y = c.get_coord()
 		plt.scatter(x, y, c=colors[i], s=100, marker='X', lw=1, ec='k')
@@ -293,5 +294,5 @@ def plot_data(points, clusters, epoch):
 
 if __name__ == '__main__':
 	k_means()
-	system("convert -delay 100 ./plots/*.png ./plots/animated.gif")
+	system("convert -delay 75 ./plots/*.png ./plots/animated.gif")
 	exit(0)

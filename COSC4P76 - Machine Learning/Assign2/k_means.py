@@ -7,9 +7,7 @@ import os.path
 try:
 	import pandas as pd # some containerization for input data
 	import numpy as np # random
-	if len(sys.argv) == 6:
-		import matplotlib.pyplot as plt # plotting
-		import matplotlib.patches as mpat # for matplot legends
+	import matplotlib.pyplot as plt # plotting
 except ImportError:
 	print("\nModules could not be loaded.")
 	print("Ensure module dependencies are installed before execution.\n")
@@ -27,7 +25,7 @@ def execution_instructions():
 	print("        -- 3 - Chebyshev Metric")
 	print(" <K> -- k-parameter, or how many clusters")
 	print(" <Epochs> -- how many iterations of k-means to perform")
-	print(" <Save> -- (optional) path to save plot to\n")
+	print(" <Save> -- (optional) filename to save plot as\n")
 	print("If no argument is provided for <Save>, no plots will be made.")
 	print("Ensure <File> and <Save> point to valid files and directories.\n")
 	sys.exit(1)
@@ -46,9 +44,7 @@ try:
 		raise ValueError
 	if len(sys.argv) == 6:
 		OUTPUT = sys.argv[5]
-		if not os.path.isdir('/'.join(OUTPUT.split('/')[:-1])):
-			raise NotADirectoryError
-except (ValueError, FileNotFoundError, NotADirectoryError):
+except (ValueError, FileNotFoundError):
 	execution_instructions()
 
 class Point:
@@ -107,24 +103,28 @@ class Point:
 		"""Inequality overload method."""
 		return not self.__eq__(other)
 
-def k_means(points, clusters, epochs=MAX_EPOCH):
+def k_means(epochs=MAX_EPOCH):
 	"""Performs the k-means clustering on the data.
 
-	Before the algorith is run, the data points would have been loaded and k
-	random centroids were placed within the coordinate system. Then this
-	algorithm will find all cluster neighbors for every point, find the mean
-	position of points within a cluster, and move the centroids to that
-	position. This process repeats for a number of iterations (epochs).
+	The k-means algorithm generates centroids within a data set which are
+	initially uniformly random. Then, finds the nearest points to each centroid
+	and considers them members of that cluster. The centroids are then moved
+	where the new position is the mean position of each member point. The
+	process of finding nearest membership points and moving centroids is
+	repeated over many epochs/iterations, eventually the centroids will converge
+	to the center of clusters within the data set.
 
 	Parameters:
-		points : a list of Points.
-		clusters : a list of cluster centroids.
 		epochs : how many iterations the algorithm should perform.
 	"""
-	for _ in range(1, epochs+1):
+	points, x_bounds, y_bounds = load_data() # load data and find bounds
+	clusters = generate_centroids(points, x_bounds, y_bounds) # make centroids
+	for _ in range(epochs):
 		find_clusters(points, clusters)
 		move_centroids(points, clusters)
-	print(f"{dunn_index(points, clusters)}")
+	print(f"\nThe Dunn Index is: {dunn_index(points, clusters)}.\n")
+	if len(sys.argv) == 6:
+		plot_data(points, clusters)
 
 def dunn_index(points, clusters):
 	"""Calculates the Dunn Index of the clustering.
@@ -290,19 +290,16 @@ def load_data(file=FILENAME):
 		arr_points.append(Point(d['x'], d['y']))
 	return (arr_points, df_minmax['x'], df_minmax['y'])
 
-def setup_plot(file=FILENAME):
+def setup_plot():
 	"""Sets up the plot with some attributes.
 
 	Parameters:
 		file : loaded data filename to put in plot title.
 	"""
-	plt.figure(f'K-Means Clustering ({file})')
+	plt.figure('K-Means Clustering')
 	plt.xticks([])
 	plt.yticks([])
 	plt.margins(0.05, 0.05)
-	legend_data = mpat.Patch(color='black', label='data')
-	legend_cent = mpat.Patch(color='red', label='centroid')
-	plt.legend(handles=[legend_data, legend_cent], loc=2, prop={'size': 8})
 
 def plot_data(points, clusters, file=OUTPUT):
 	"""Plots data and cluster centroids.
@@ -310,27 +307,28 @@ def plot_data(points, clusters, file=OUTPUT):
 	Parameters:
 		points : a list of Points.
 		clusters : a list of cluster centroids.
-		out : filename to save plot as.
+		file : filename to save plot as.
 	"""
 	setup_plot()
-	for p in points:
-		x, y = p.get_coord()
-		plt.scatter(x, y, marker='o', color='k', s=2, linewidths=1)
-	for c in clusters:
+	colors = ['red', 'lime', 'blue', 'yellow', 'orange', 'deeppink', \
+		'olivedrab', 'aqua', 'thistle', 'mediumvioletred', 'plum', \
+		'burlywood', 'maroon', 'mediumspringgreen', 'dodgerblue']
+	for c, i in zip(clusters, range(len(clusters))):
+		point_x, point_y = [], []
+		for p in points:
+			if p.get_cluster() is not c:
+				continue
+			x, y = p.get_coord()
+			point_x.append(x)
+			point_y.append(y)
+		plt.scatter(point_x, point_y, c=colors[i], s=2, marker='o', lw='1')
+	for c, i in zip(clusters, range(len(clusters))):
 		x, y = c.get_coord()
-		plt.scatter(x, y, marker='x', color='r', s=25, linewidths=1)
+		plt.scatter(x, y, c=colors[i], s=100, marker='X', lw=1, ec='k')
 	plt.savefig(file, bbox_inches='tight', pad_inches=0.1) # save file
 	plt.show()
 	plt.clf()
 
-def main():
-	"""k-means algorithm main driver."""
-	points, x_bounds, y_bounds = load_data()
-	clusters = generate_centroids(points, x_bounds, y_bounds)
-	k_means(points, clusters)
-	if len(sys.argv) == 6:
-		plot_data(points, clusters)
-
 if __name__ == '__main__':
-	main()
+	k_means()
 	sys.exit(0)

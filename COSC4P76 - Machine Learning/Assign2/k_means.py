@@ -119,14 +119,12 @@ def k_means(epochs=MAX_EPOCH):
 	"""
 	points = load_data()
 	clusters = initialize_centroids(points)
-	# below meant for saving each epoch as image
 	find_clusters(points, clusters)
 	plot_data(points, clusters, 0)
 	for i in range(epochs+1):
 		find_clusters(points, clusters)
 		move_centroids(points, clusters)
-		# below meant for saving each epoch as image
-		plot_data(points, clusters, i)
+		plot_data(points, clusters, i+1)
 	print(f"\nThe Dunn Index is: {dunn_index(points, clusters)}.\n")
 
 def dunn_index(points, clusters):

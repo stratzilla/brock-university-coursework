@@ -40,7 +40,7 @@ try:
 	K_PARAM = int(argv[3])
 	MAX_EPOCH = int(argv[4])
 	OUTPUT = None
-	if not 3 >= TYPE >= 1 or 25 > K_PARAM < 2 or MAX_EPOCH < 1:
+	if not 3 >= TYPE >= 1 or not 25 >= K_PARAM >= 2 or MAX_EPOCH < 1:
 		raise ValueError
 	if not isdir('./plots/'):
 		system('mkdir plots')
@@ -270,6 +270,7 @@ def plot_data(points, clusters, epoch):
 	plt.xticks([])
 	plt.yticks([])
 	plt.margins(0.05, 0.05)
+	# colors chosen to increase separability/improve distinction
 	colors = ['red', 'lime', 'blue', 'yellow', 'orange', 'deeppink', \
 		'olivedrab', 'aqua', 'thistle', 'mediumvioletred', 'plum', \
 		'burlywood', 'maroon', 'mediumspringgreen', 'dodgerblue', \
@@ -294,5 +295,4 @@ def plot_data(points, clusters, epoch):
 
 if __name__ == '__main__':
 	k_means()
-	system("convert -delay 75 ./plots/*.png ./plots/animated.gif")
 	exit(0)

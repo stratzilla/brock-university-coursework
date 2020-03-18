@@ -62,19 +62,6 @@ class Point:
 		"""Constructs Point based on x,y-coordinate."""
 		self.x_c, self.y_c, self.cluster = x, y, None
 
-	def find_cluster(self, clusters):
-		"""Method to determine which cluster the point belongs to.
-
-		Parameters:
-			clusters : a list of cluster centroids.
-		"""
-		best_distance, best_cluster = inf, None
-		for c in clusters:
-			d = distance(self, c)
-			if d < best_distance:
-				best_distance, best_cluster = d, c
-		self.set_cluster(best_cluster)
-
 	def set_coord(self, x, y):
 		"""x,y-coordinate mutator method."""
 		self.x_c, self.y_c = x, y
@@ -90,10 +77,6 @@ class Point:
 	def get_cluster(self):
 		"""cluster accessor method."""
 		return self.cluster
-
-	def __str__(self):
-		"""Print overload method."""
-		return str(int(self.x_c)) + ", " + str(int(self.y_c))
 
 	def __eq__(self, other):
 		"""Equality overload method."""
@@ -196,7 +179,12 @@ def find_clusters(points, clusters):
 		clusters : a list of cluster centroids.
 	"""
 	for p in points:
-		p.find_cluster(clusters)
+		best_distance, best_cluster = inf, None
+		for c in clusters:
+			d = distance(p, c)
+			if d < best_distance:
+				best_distance, best_cluster = d, c
+		p.set_cluster(best_cluster)
 
 def initialize_centroids(points, k=K_PARAM):
 	"""Use k-means++ as initialization strategy for centroids.

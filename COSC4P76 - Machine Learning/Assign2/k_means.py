@@ -160,7 +160,7 @@ def distance(p, q, t=TYPE):
 		The distance between Points p and q.
 	"""
 	(p_x, p_y), (q_x, q_y) = p.get_coord(), q.get_coord()
-	# Euclidean Distance measure, d(p, q) = sqrt((q_1 - p_2)^2 + (q_2 - p_2)^2)
+	# Euclidean Distance measure, d(p, q) = sqrt((q_1 - p_1)^2 + (q_2 - p_2)^2)
 	if t == 1:
 		return sqrt((q_x - p_x)**2 + (q_y - p_y)**2)
 	# Manhattan Distance measure, d(p, q) = |q_1 - p_1| + |q_2 - p_2|
@@ -272,8 +272,7 @@ def plot_data(points, clusters, epoch):
 			x, y = p.get_coord()
 			point_x.append(x)
 			point_y.append(y)
-		point_color = 'k' if epoch == 0 else colors[i]
-		plt.scatter(point_x, point_y, c=point_color, s=2, marker='o', lw='1')
+		plt.scatter(point_x, point_y, c=colors[i], s=2, marker='o', lw='1')
 	for c, i in zip(clusters, range(len(clusters))):
 		x, y = c.get_coord()
 		plt.scatter(x, y, c=colors[i], s=100, marker='X', lw=1, ec='k')

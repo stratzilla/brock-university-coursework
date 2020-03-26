@@ -84,7 +84,7 @@ def decode_file(input, key):
 		input : the bytearray of the file.
 		key : the key used to decode it.
 	"""
-	print('\nSaving decoded file as \'decoded.txt\'...', end=' ')
+	print('\nSaving decoded file as \'decodedB.txt\'...', end=' ')
 	for i in range(len(input)):
 		the_key = key_generator(key, i)
 		input[i] ^= the_key

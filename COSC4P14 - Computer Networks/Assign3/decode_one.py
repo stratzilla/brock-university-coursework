@@ -36,7 +36,7 @@ def determine_key(input):
 	Returns:
 		The key used to encrypt the file.
 	"""
-	print('\nBrute forcing key...')
+	print('\nBrute forcing key...\n')
 	best_key = 0
 	best_lfcr = 0
 	start_t = time()
@@ -65,7 +65,7 @@ def decode_file(input, key):
 		input : the bytearray of the file.
 		key : the key used to decode it.
 	"""
-	print('\nSaving decoded file as \'decoded.txt\'...', end=' ')
+	print('\nSaving decoded file as \'decodedA.txt\'...', end=' ')
 	for i in range(len(input)):
 		input[i] ^= key
 	open('decodedA.txt', 'wb').write(input)

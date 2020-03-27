@@ -41,9 +41,14 @@ def determine_key(input):
 	best_e = 0
 	start_t = time()
 	for potential_key in range(32768): # brute force
-		if potential_key % 2048 == 0:
-			print(f'Trying keys [{potential_key}, {potential_key+2048}]...')
+		if potential_key % 4096 == 0:
+			print(f'Trying keys [{potential_key}, {potential_key+4095}]...')
 		count_e = 0
+		# consider the most correct decoding to be one which
+		# follows English letter frequency, namely for 'e'/'E'
+		# in English, 'e'/'E' appears roughly 11% of the time, more
+		# than any other letter. It can be assumed if the most frequent
+		# letter is 'e'/'E', then the decoding is correct
 		for i in range(len(input)): # every byte
 			# xor byte with key
 			# if this equals `e` or `E`, add to count
@@ -72,6 +77,13 @@ def key_generator(num, idx):
 	bin_num = bin(num)[2:] # convert to bit string
 	for _ in range(15 - len(bin_num)):
 		bin_num = '0' + bin_num # pad so 15-bits
+	# this works like so: imagine a 15-bit number:
+	#  010011100011001
+	# this will shift the bits such that if you were to index
+	# the 16th bit, it will loop around and catch the 1st bit
+	# visualize it as an infinitely long bit string repetition:
+	#  010011100011001 010011100011001 010011100011001 ...
+	# this function returns segments of 8 bits from the repetition
 	for _ in range(idx):
 		bin_num = bin_num[8:] + bin_num[:8] # shift
 	out_num = bin_num[:8] # get first 8 bits

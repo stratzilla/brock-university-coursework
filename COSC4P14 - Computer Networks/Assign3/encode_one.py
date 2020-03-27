@@ -33,10 +33,10 @@ def encode_file(input, key):
 		input : the bytearray of the file.
 		key : the key used to encode it.
 	"""
-	print('\nSaving encoded file as \'rs09co.answer.A.enc\'...', end=' ')
+	print('\nSaving encoded file as \'out.answer.A.enc\'...', end=' ')
 	for i in range(len(input)):
 		input[i] ^= key
-	open('rs09co.answer.A.enc', 'wb').write(input)
+	open('out.answer.A.enc', 'wb').write(input)
 	print('done!\n')
 
 if __name__ == '__main__':

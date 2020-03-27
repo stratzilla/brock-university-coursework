@@ -42,8 +42,10 @@ def determine_key(input):
 	start_t = time()
 	for potential_key in range(256): # brute force
 		if potential_key % 32 == 0:
-			print(f'Trying keys [{potential_key}, {potential_key+32}]...')
+			print(f'Trying keys [{potential_key}, {potential_key+31}]...')
 		count_lfcr = 0
+		# since it is Windows encoded, there will be an abundance of
+		# CR,LF found in the file. Find a decoding which maximizes this
 		for i in range(len(input)-1): # every byte
 			# xor byte and next byte with key
 			# if this equals CR+LF, add to count

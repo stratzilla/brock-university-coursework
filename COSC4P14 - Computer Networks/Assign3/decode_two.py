@@ -84,10 +84,13 @@ def key_generator(num, idx):
 	# visualize it as an infinitely long bit string repetition:
 	#  010011100011001 010011100011001 010011100011001 ...
 	# this function returns segments of 8 bits from the repetition
-	for _ in range(idx):
+	for _ in range(idx % 15):
+		# if the string repeats every 15th position, you can use mod
+		# to reduce the number of shifts, so instead of doing 17 shifts
+		# only do two, et cetera. Without this, the algorithm takes 75min
+		# and with this, it takes 85 seconds.
 		bin_num = bin_num[8:] + bin_num[:8] # shift
-	out_num = bin_num[:8] # get first 8 bits
-	return int('0b' + out_num, 2) # convert back
+	return int('0b' + bin_num[:8], 2) # convert back
 
 def decode_file(input, key):
 	"""Decodes the file using the key.
@@ -96,11 +99,11 @@ def decode_file(input, key):
 		input : the bytearray of the file.
 		key : the key used to decode it.
 	"""
-	print('\nSaving decoded file as \'decodedB.txt\'...', end=' ')
+	print('\nSaving decoded file as \'../outputs/decodedB.txt\'...', end=' ')
 	for i in range(len(input)):
 		the_key = key_generator(key, i)
 		input[i] ^= the_key
-	open('decodedB.txt', 'wb').write(input)
+	open('../outputs/decodedB.txt', 'wb').write(input)
 	print('done!\n')
 
 if __name__ == '__main__':

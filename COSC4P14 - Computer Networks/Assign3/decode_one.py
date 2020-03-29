@@ -67,10 +67,10 @@ def decode_file(input, key):
 		input : the bytearray of the file.
 		key : the key used to decode it.
 	"""
-	print('\nSaving decoded file as \'decodedA.txt\'...', end=' ')
+	print('\nSaving decoded file as \'../outputs/decodedA.txt\'...', end=' ')
 	for i in range(len(input)):
 		input[i] ^= key
-	open('decodedA.txt', 'wb').write(input)
+	open('../outputs/decodedA.txt', 'wb').write(input)
 	print('done!\n')
 
 if __name__ == '__main__':

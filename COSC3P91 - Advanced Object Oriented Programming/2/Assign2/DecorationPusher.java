@@ -1,0 +1,20 @@
+package roborace.server;
+
+public class DecorationPusher extends Decoration {
+	
+    @Override
+    public void effect(EventList events, int phase, int playerID, Board board) {
+        // get robot from playerID
+        Robot playerRobot = board.getRobotByID(playerID);
+        // determine if phase is one of phase1-3
+        boolean phaseTruth = (phase == phase1)
+                          || (phase == phase2)
+                          || (phase == phase3);
+        // if robot alive and phase is any of phase1-3
+        if (playerRobot.isAlive() && phaseTruth) {
+            // move robot using push
+            board.step(events, playerID, direction);
+        }
+    }
+
+}

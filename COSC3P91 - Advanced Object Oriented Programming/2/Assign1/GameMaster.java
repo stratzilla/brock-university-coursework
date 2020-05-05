@@ -1,19 +1,6 @@
 package roborace.server;
 
-import roborace.client.Player;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.io.IOException;
-import java.util.Arrays;
-
 public class GameMaster {
-
-    private final Robot[] robots;
-    private final Player[] players;
-    private final Board board;
-    private final CardFactory cardFactory;
 
     public GameMaster(String[] names, Player[] players) {
         this.players = players; // store players

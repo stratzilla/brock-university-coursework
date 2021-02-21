@@ -1,28 +1,3 @@
-/* I didn't finish this assignment. I started early and finished what I thought was
-correct, but I found out shortly before it was due I had done it incorrectly.
-The actual purpose of the assignment I was oblivious to until the Saturday
-before it was due. 
-
-I thought the assignment was to a) create two ADTs, b) implement them using
-arrays and linked lists respectively, and c) test them. I didn't read the
-assignment clear enough because the purpose of making a datatype that can accept
-a number larger than long wasn't apparent to me until very late.
-
-What I had initially done was utilize arrays and lists only
-for the getDigit() class, since I thought the assignment was just making ADT
-and testing your implementation. While I managed to do the first half (arrays)
-properly in the short time I had before it was due, I didn't have enough time
-to do the linked list portion.
-
-My original linked list implementation is still here, commented out. You're
-welcome to gloss over it, but it wasn't done to the assignment's specifications
-and probably is worth zero marks (although part marks would be nice).
-
-Lastly, I had a difficult time making the TestHarness into it's own package.
-Setting it up was straightforward, but when I tried to import it for use, the
-method visibility wasn't right. I couldn't access any methods I wrote, so I
-moved them here. */
-
 package assign3;
 import BigNumbers.*;
 

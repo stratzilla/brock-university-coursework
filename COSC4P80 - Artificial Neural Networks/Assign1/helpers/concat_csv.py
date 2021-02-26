@@ -18,8 +18,8 @@ COMB = COMB.iloc[1:]
 # name each column
 COMB.columns = [f'Run {i+1}' for i in range(len(COMB.columns))]
 
-# get the 50% worst performing runs
-WORST_COLUMNS = (COMB.iloc[-1].nlargest(floor(len(COMB.columns)*0.5)).index)
+# get the 25% worst performing runs
+WORST_COLUMNS = (COMB.iloc[-1].nlargest(floor(len(COMB.columns)*0.25)).index)
 # and remove them from the df
 COMB = COMB.drop(WORST_COLUMNS, axis=1)
 

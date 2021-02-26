@@ -44,7 +44,7 @@ printf "\nGetting results for BP-NN for hidden layer size...";
 
 for j in $(seq 1 ${#bp_hl_tests[@]}); do
 	for i in $(seq 1 $max_runs); do
-		../code/backprop_network.py 1 ${j} 3 2 > \
+		../code/backprop_network.py 1 ${j} 3 1 > \
 			../results/bp/hl/${bp_hl_tests[${j}-1]}/${i}.csv &
 		if [ $(( $i % $max_concurrent_runs )) == 0 ]; then
 			wait
@@ -58,7 +58,7 @@ printf " done! \nGetting results for BP-NN for learning rate...";
 
 for j in $(seq 1 ${#bp_lr_tests[@]}); do
 	for i in $(seq 1 $max_runs); do
-		../code/backprop_network.py 1 2 ${j} 2 > \
+		../code/backprop_network.py 1 2 ${j} 1 > \
 			../results/bp/lr/${bp_lr_tests[${j}-1]}/${i}.csv &
 		if [ $(( $i % $max_concurrent_runs )) == 0 ]; then
 			wait
@@ -72,7 +72,7 @@ printf " done! \nGetting results for BP-NN for momentum rate...";
 
 for j in $(seq 1 ${#bp_mr_tests[@]}); do
 	for i in $(seq 1 $max_runs); do
-		../code/backprop_network.py 1 2 3 ${j} > \
+		../code/backprop_network.py 1 1 3 ${j} > \
 			../results/bp/mr/${bp_mr_tests[${j}-1]}/${i}.csv &
 		if [ $(( $i % $max_concurrent_runs )) == 0 ]; then
 			wait
@@ -86,7 +86,7 @@ printf " done! \n\nGetting results for PSO-NN for hidden layer size...";
 
 for j in $(seq 1 ${#pso_hl_tests[@]}); do
 	for i in $(seq 1 $max_runs); do
-		../code/particle_network.py 1 ${j} 3 2 > \
+		../code/particle_network.py 1 ${j} 3 3 > \
 			../results/pso/hl/${pso_hl_tests[${j}-1]}/${i}.csv &
 		if [ $(( $i % $max_concurrent_runs )) == 0 ]; then
 			wait
@@ -100,7 +100,7 @@ printf " done! \nGetting results for PSO-NN for swarm size...";
 
 for j in $(seq 1 ${#pso_ss_tests[@]}); do
 	for i in $(seq 1 $max_runs); do
-		../code/particle_network.py 1 2 ${j} 2 > \
+		../code/particle_network.py 1 1 ${j} 3 > \
 			../results/pso/ss/${pso_ss_tests[${j}-1]}/${i}.csv &
 		if [ $(( $i % $max_concurrent_runs )) == 0 ]; then
 			wait
@@ -114,7 +114,7 @@ printf " done! \nGetting results for PSO-NN for swarm parameters...";
 
 for j in $(seq 1 ${#pso_par_tests[@]}); do
 	for i in $(seq 1 $max_runs); do
-		../code/particle_network.py 1 2 3 ${j} > \
+		../code/particle_network.py 1 2 1 ${j} > \
 			../results/pso/par/${pso_par_tests[${j}-1]}/${i}.csv &
 		if [ $(( $i % $max_concurrent_runs )) == 0 ]; then
 			wait

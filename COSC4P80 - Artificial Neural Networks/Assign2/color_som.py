@@ -12,7 +12,8 @@ except ImportError: # if not found
 	exit(1)
 
 try: # initialization of constants from command line
-	if len(argv) != 8: raise Error # if inappropriate number of arguments
+	if len(argv) != 8: # if inappropriate number of arguments
+		raise ValueError
 	WIDTH, HEIGHT = int(argv[1]), int(argv[2]) # dimensions of NxN network
 	NUM_VECTORS = int(argv[3]) # number of input vectors
 	MAX_EPOCH = int(argv[4]) # number of training epochs
@@ -25,7 +26,7 @@ try: # initialization of constants from command line
 	if WIDTH < 5 or HEIGHT < 5 or NUM_VECTORS < 2 or MAX_EPOCH < 2 \
 		or not (0.00 < LEARNING_RATE < 1.00) or MAX_NEIGHBORHOOD_RAD < 1 \
 		or not (1 <= METRIC_SPACE <= 3):
-			raise Error
+			raise ValueError
 except:	# remind user of proper execution instructions
 	print("\nExecute the script as the below:\n")
 	print(" $ ./color_som.py <args 1..7>\n")
@@ -40,14 +41,6 @@ except:	# remind user of proper execution instructions
 	print(" <arg7> - metric space to use for distance calculations")
 	print("          (1 - Euclidean, 2 - Manhattan, 3 - Chebyshev)\n")
 	exit(1)
-finally: # on successful initialization, display chosen parameters in console
-	print(f"\nNetwork dimensions: {WIDTH}x{HEIGHT}")
-	print(f"Number of input color vectors: {NUM_VECTORS}")
-	print(f"Number of training epochs: {MAX_EPOCH}")
-	print(f"Learning rate: {LEARNING_RATE}")
-	print(f"Size of neighborhood proportion: 1/{MAX_NEIGHBORHOOD_RAD}")
-	ms_string = ["Euclidean", "Manhattan", "Chebyshev"]
-	print(f"Metric space used: {ms_string[METRIC_SPACE-1]}")
 
 def self_organizing_map():
 	"""Self organizing map main driver.
@@ -66,7 +59,7 @@ def self_organizing_map():
 		# find node in lattice which most closely resembles input vector
 		bmu = find_best_matching_unit(lattice, random_input)
 		# find some radius around the most similar node to then shift
-		neighborhood = find_neighborhood(lattice, bmu, e)
+		neighborhood = find_neighborhood(lattice, e)
 		# update bmu and bmu neighborhood to closer resemble input vector
 		weight_update(lattice, bmu, neighborhood, random_input, e)
 		show_image(lattice, e) # display current epoch's NxN lattice
@@ -85,26 +78,28 @@ def weight_update(lattice, best_matching_unit, neighborhood, vec, curr_epoch):
 	"""
 	# learning rate decays as a function of current epoch and total epochs
 	l_rate = (LEARNING_RATE * exp(-1 * (curr_epoch/MAX_EPOCH)))
-	for x in range(len(lattice)): # for each column
-		for y in range(len(lattice[0])): # for each row
+	for x, _ in enumerate(lattice): # for each column
+		for y, _ in enumerate(lattice[0]): # for each row
 			# find distance of (x,y) to the BMU
-			bmu_distance = distance([x,y], best_matching_unit)
+			bmu_distance = distance([x, y], best_matching_unit)
 			# if (x,y) is within neighborhood radius of BMU
 			if bmu_distance < neighborhood:
 				# neighborhood multiplier to update based on distance
 				n_mult = exp(-1 * ((bmu_distance**2)/(2*(neighborhood**2))))
-				for i in range(len(lattice[x][y])): # for each weight
+				for i, _ in enumerate(lattice[x][y]): # for each weight
 					# update weight based on hyperparameters and input vector
 					lattice[x][y][i] += (n_mult * l_rate * \
 						(vec[i] - lattice[x][y][i]))
+					# clamp just in case limitation on learning rate is removed
+					# leading to invalid RGB values (eg. below 0 or above 1)
+					lattice[x][y][i] = max(min(lattice[x][y][i], 1.00), 0.00)
 
-def find_neighborhood(lattice, best_matching_unit, curr_epoch):
+def find_neighborhood(lattice, curr_epoch):
 	"""Finds neighborhood about best matching unit.
 	Determines how large the neighborhood is based on a radius.
 
 	Parameters:
 		lattice : the network to find neighborhood around BMU in.
-		best_matching_unit : the BMU.
 		curr_epoch : the current epoch number.
 	Returns:
 		The neighborhood radius.
@@ -114,7 +109,7 @@ def find_neighborhood(lattice, best_matching_unit, curr_epoch):
 	# some time constant to decay neighborhood radius
 	time_constant = MAX_EPOCH/log(max_radius)
 	# return a decayed radius based on epoch and maximum radius
-	return (max_radius * exp(-1 * (curr_epoch/time_constant)))
+	return max_radius * exp(-1 * (curr_epoch/time_constant))
 
 def find_best_matching_unit(lattice, vec):
 	"""Finds the best matching unit node in the network.
@@ -131,8 +126,8 @@ def find_best_matching_unit(lattice, vec):
 		range(DIMENSIONS)], [RANGE_MAX for _ in range(DIMENSIONS)])
 	# best co-ordinates set outside of range so guaranteed overwrite
 	best_coordinate = [-1, -1]
-	for x in range(len(lattice)): # for each column
-		for y in range(len(lattice[x])): # for each row
+	for x, _ in enumerate(lattice): # for each column
+		for y, _ in enumerate(lattice[x]): # for each row
 			# find distance between (x,y) and input vector
 			vector_distance = distance(lattice[x][y], vec)
 			if vector_distance < best_distance: # if new best found
@@ -156,12 +151,12 @@ def distance(p, q):
 		The distance between p and q in the decided metric space.
 	"""
 	if METRIC_SPACE == 1: # euclidean
-		return ((sum(((p[i] - q[i])**2) for i in range(len(p))))**(0.5))
-	elif METRIC_SPACE == 2: # manhattan
-		return (sum(abs(p[i] - q[i]) for i in range(len(p))))
-	else: # chebyshev
-		distances = [abs(p[i] - q[i]) for i in range(len(p))]
-		return max(distances)
+		return (sum(((p[i] - q[i])**2) for i in range(len(p))))**(0.5)
+	if METRIC_SPACE == 2: # manhattan
+		return sum(abs(p[i] - q[i]) for i in range(len(p)))
+	# otherwise chebyshev
+	distances = [abs(p[i] - q[i]) for i in range(len(p))]
+	return max(distances)
 
 def rand_weights():
 	"""Random weight generator.
@@ -208,5 +203,13 @@ def show_image(data, curr_epoch):
 		plt.show()
 
 if __name__ == '__main__':
+	# on successful initialization, display chosen parameters in console
+	print(f"\nNetwork dimensions: {WIDTH}x{HEIGHT}")
+	print(f"Number of input color vectors: {NUM_VECTORS}")
+	print(f"Number of training epochs: {MAX_EPOCH}")
+	print(f"Learning rate: {LEARNING_RATE}")
+	print(f"Size of neighborhood proportion: 1/{MAX_NEIGHBORHOOD_RAD}")
+	MS_STRING = ["Euclidean", "Manhattan", "Chebyshev"]
+	print(f"Metric space used: {MS_STRING[METRIC_SPACE-1]}")
 	self_organizing_map()
 	exit(0)

@@ -24,7 +24,7 @@ try: # initialization of constants from command line
 	DIMENSIONS = 3 # color channels; hardcoded by default
 	# if any argument is outside valid range, raise an error
 	if WIDTH < 5 or HEIGHT < 5 or NUM_VECTORS < 2 or MAX_EPOCH < 2 \
-		or not (0.00 < LEARNING_RATE < 1.00) or MAX_NEIGHBORHOOD_RAD < 1 \
+		or not (0.00 <= LEARNING_RATE <= 1.00) or MAX_NEIGHBORHOOD_RAD < 1 \
 		or not (1 <= METRIC_SPACE <= 3):
 			raise ValueError
 except:	# remind user of proper execution instructions
@@ -50,8 +50,10 @@ def self_organizing_map():
 	lattice = generate_lattice()
 	# create a set of random input vectors (random colors)
 	input_vectors = generate_input_vectors()
-	show_image(lattice, 0) # display initial random NxN lattice
-	input("\nPress Enter to Begin Training\n")
+	plot_title = "Initial conditions"
+	show_image(lattice, 0, plot_title) # display initial random NxN lattice
+	input("\nPress `Enter` to Begin Training\n")
+	print(f"Training now for {MAX_EPOCH} epochs... ", end="", flush=True)
 	for e in range(MAX_EPOCH+1):
 		# get random input vector
 		random_idx = randint(0, NUM_VECTORS-1)
@@ -62,7 +64,8 @@ def self_organizing_map():
 		neighborhood = find_neighborhood(lattice, e)
 		# update bmu and bmu neighborhood to closer resemble input vector
 		weight_update(lattice, bmu, neighborhood, random_input, e)
-		show_image(lattice, e) # display current epoch's NxN lattice
+		plot_title = f"Epoch {e} / {MAX_EPOCH}"
+		show_image(lattice, e+1, plot_title) # display current epoch's NxN lattice
 
 def weight_update(lattice, best_matching_unit, neighborhood, vec, curr_epoch):
 	"""Network weight update function.
@@ -185,26 +188,30 @@ def generate_lattice():
 	"""
 	return [[rand_weights() for _ in range(WIDTH)] for _ in range(HEIGHT)]
 
-def show_image(data, curr_epoch):
+def show_image(data, curr_epoch, title):
 	"""Image displayer for animation of training.
 	Interfaces `matplotlib` to illustrate how SOM trains over time.
 
 	Parameters:
 		data : the NxN array of 3-tuples of color data (pixels).
 		curr_epoch : the current training epoch number.
+		title : title of the image being display.
 	"""
 	plt.imshow(data) # load data into frame
-	plt.title(f"Epoch {curr_epoch} / {MAX_EPOCH}") # denote epoch number
+	plt.title(title) # denote epoch number
 	plt.axis('off') # remove axes
 	plt.pause(0.01) # delay between frames
-	if curr_epoch < MAX_EPOCH: # clear frame for redraw if non-terminal frame
+	if curr_epoch <= MAX_EPOCH: # clear frame for redraw if non-terminal frame
 		plt.clf()
 	else: # maintain window if terminal frame
-		print("Finished training. Saving image to parent directory.\n")
+		print("done!")
 		# save just figure after closing shown window
 		plt.title("")
+		print("Saving image to parent directory... ", end="", flush=True)
 		save_destination = f"./output.png"
 		plt.savefig(save_destination, bbox_inches='tight', pad_inches=0.1)
+		print("done!\n")
+		plt.title("Finished training")
 		plt.show() # maintain window
 
 if __name__ == '__main__':

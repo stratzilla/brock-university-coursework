@@ -194,13 +194,18 @@ def show_image(data, curr_epoch):
 		curr_epoch : the current training epoch number.
 	"""
 	plt.imshow(data) # load data into frame
-	plt.title(f"Epoch {curr_epoch}") # denote epoch number
+	plt.title(f"Epoch {curr_epoch} / {MAX_EPOCH}") # denote epoch number
 	plt.axis('off') # remove axes
 	plt.pause(0.01) # delay between frames
 	if curr_epoch < MAX_EPOCH: # clear frame for redraw if non-terminal frame
 		plt.clf()
 	else: # maintain window if terminal frame
-		plt.show()
+		print("Finished training. Saving image to parent directory.\n")
+		# save just figure after closing shown window
+		plt.title("")
+		save_destination = f"./output.png"
+		plt.savefig(save_destination, bbox_inches='tight', pad_inches=0.1)
+		plt.show() # maintain window
 
 if __name__ == '__main__':
 	# on successful initialization, display chosen parameters in console

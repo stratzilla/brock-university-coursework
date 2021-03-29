@@ -20,14 +20,14 @@ try: # initialization of constants from command line
 	LEARNING_RATE = float(argv[5]) # learning rate for training
 	MAX_NEIGHBORHOOD_RAD = int(argv[6]) # maximum neighborhood radius around BMU
 	METRIC_SPACE = int(argv[7]) # metric space for distance calculation
-	RANGE_MIN, RANGE_MAX = 0, 1 # color range; hardcoded by default
+	RANGE_MIN, RANGE_MAX = 0.00, 1.00 # color range; hardcoded by default
 	DIMENSIONS = 3 # color channels; hardcoded by default
 	# if any argument is outside valid range, raise an error
 	if WIDTH < 5 or HEIGHT < 5 or NUM_VECTORS < 2 or MAX_EPOCH < 2 \
 		or not (0.00 <= LEARNING_RATE <= 1.00) or MAX_NEIGHBORHOOD_RAD < 1 \
 		or not (1 <= METRIC_SPACE <= 3):
 			raise ValueError
-except:	# remind user of proper execution instructions
+except ValueError: # remind user of proper execution instructions
 	print("\nExecute the script as the below:\n")
 	print(" $ ./color_som.py <args 1..7>\n")
 	print("Where the arguments are as below:\n")
@@ -53,7 +53,7 @@ def self_organizing_map():
 	plot_title = "Initial conditions"
 	show_image(lattice, 0, plot_title) # display initial random NxN lattice
 	input("\nPress `Enter` to Begin Training\n")
-	print(f"Training now for {MAX_EPOCH} epochs... ", end="", flush=True)
+	print(f"Training network for {MAX_EPOCH} epochs... ", end="", flush=True)
 	for e in range(MAX_EPOCH+1):
 		# get random input vector
 		random_idx = randint(0, NUM_VECTORS-1)
@@ -95,7 +95,8 @@ def weight_update(lattice, best_matching_unit, neighborhood, vec, curr_epoch):
 						(vec[i] - lattice[x][y][i]))
 					# clamp just in case limitation on learning rate is removed
 					# leading to invalid RGB values (eg. below 0 or above 1)
-					lattice[x][y][i] = max(min(lattice[x][y][i], 1.00), 0.00)
+					lattice[x][y][i] = max(min(lattice[x][y][i], \
+						RANGE_MAX), RANGE_MIN)
 
 def find_neighborhood(lattice, curr_epoch):
 	"""Finds neighborhood about best matching unit.
@@ -211,6 +212,7 @@ def show_image(data, curr_epoch, title):
 		save_destination = f"./output.png"
 		plt.savefig(save_destination, bbox_inches='tight', pad_inches=0.1)
 		print("done!\n")
+		print("Close figure window to exit program.\n")
 		plt.title("Finished training")
 		plt.show() # maintain window
 
@@ -223,5 +225,5 @@ if __name__ == '__main__':
 	print(f"Size of neighborhood proportion: 1/{MAX_NEIGHBORHOOD_RAD}")
 	MS_STRING = ["Euclidean", "Manhattan", "Chebyshev"]
 	print(f"Metric space used: {MS_STRING[METRIC_SPACE-1]}")
-	self_organizing_map()
+	self_organizing_map() # begin training
 	exit(0)

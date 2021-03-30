@@ -24,7 +24,7 @@ try: # initialization of constants from command line
 		FRAME_SIZE = int(argv[2]) # dimensions of frame slices
 		MAX_EPOCH = int(argv[3]) # number of training epochs
 		# greyscale trange; hardcoded by default
-		RANGE_MIN, RANGE_MAX = 0, 255
+		RANGE_MIN, RANGE_MAX = 0.00, 1.00
 		LEARNING_RATE = float(argv[4]) # learning rate for training
 		# maximum neighborhood radius around BMU
 		MAX_NEIGHBORHOOD_RAD = int(argv[5])
@@ -47,7 +47,7 @@ try: # initialization of constants from command line
 		TYPE = 2
 except ValueError: # remind user of proper execution instructions
 	print("\nExecute the script as the below:\n")
-	print(" $ ./image_som.py <args 1..7>\n")
+	print(" $ ./image_som_gs.py <args 1..7>\n")
 	print("Where the arguments are as below:\n")
 	print(" <arg1> - dimensions of the network")
 	print("          (at least 4; an exponent of 2, eg. 4, 8, 16, 32)")
@@ -61,7 +61,7 @@ except ValueError: # remind user of proper execution instructions
 	print("          (1 - Euclidean, 2 - Manhattan, 3 - Chebyshev)")
 	print(" <arg7> - filename of image to used (located in /images)\n")
 	print("Alternatively, you can execute the script as the below:\n")
-	print(" $ ./image_som.py <arg1>\n")
+	print(" $ ./image_som_gs.py <arg1>\n")
 	print("Where <arg1> is the filename for binary file to decompress.\n")
 	exit(1)
 
@@ -140,14 +140,13 @@ def weight_update(lattice, best_matching_unit, neighborhood, vec, curr_epoch):
 				# neighborhood multiplier to update based on distance
 				n_mult = exp(-1 * ((bmu_distance**2)/(2*(neighborhood**2))))
 				for i, _ in enumerate(lattice[x][y]): # for each weight
-					for c in range(3):
-						# update weight based on hyperparameters and input vector
-						lattice[x][y][i][c] += (n_mult * l_rate * \
-							(vec[i][c] - lattice[x][y][i][c]))
-						# clamp just in case limitation on learning rate is removed
-						# leading to invalid RGB values (eg. below 0 or above 1)
-						lattice[x][y][i][c] = int(max(min(lattice[x][y][i][c], \
-							RANGE_MAX), RANGE_MIN))
+					# update weight based on hyperparameters and input vector
+					lattice[x][y][i] += (n_mult * l_rate * \
+						(vec[i] - lattice[x][y][i]))
+					# clamp just in case limitation on learning rate is removed
+					# leading to invalid RGB values (eg. below 0 or above 1)
+					lattice[x][y][i] = max(min(lattice[x][y][i], \
+						RANGE_MAX), RANGE_MIN)
 
 def find_neighborhood(lattice, curr_epoch):
 	"""Finds neighborhood about best matching unit.
@@ -177,15 +176,14 @@ def find_best_matching_unit(lattice, vec):
 		The best matching unit for the input vector.
 	"""
 	# the maximal distance is the distance between highest and lowest possible
-	best_distance = 3*(RANGE_MAX-RANGE_MIN)*FRAME_SIZE**2
+	best_distance = distance([RANGE_MIN for _ in \
+		range(FRAME_SIZE**2)], [RANGE_MAX for _ in range(FRAME_SIZE**2)])
 	# best co-ordinates set outside of range so guaranteed overwrite
 	best_coordinate = [-1, -1]
 	for x, _ in enumerate(lattice): # for each column
 		for y, _ in enumerate(lattice[x]): # for each row
-			vector_distance = 0
-			for c in range(3):
-				# find distance between (x,y) and input vector
-				vector_distance += distance(lattice[x][y][c], vec[c])
+			# find distance between (x,y) and input vector
+			vector_distance = distance(lattice[x][y], vec)
 			if vector_distance < best_distance: # if new best found
 				# overwrite best distance and position
 				best_distance = vector_distance
@@ -239,14 +237,16 @@ def recreate_image_from_file(image_characteristics):
 		end="", flush=True)
 	[img_frames, frame_size, _, book, _, indices] = image_characteristics
 	indices = [int.from_bytes(idx, 'big') for idx in indices]
-	image = [[0 for _ in range(img_frames*frame_size)] \
+	image = [[[0.00 for _ in range(3)] for _ in range(img_frames*frame_size)] \
 		for _ in range(img_frames*frame_size)]
 	idx = 0
 	for i in range(0, len(image), frame_size):
 		for j in range(0, len(image[0]), frame_size):
 			for k in range(frame_size):
 				for l in range(frame_size):
-					image[i+k][j+l] = book[indices[idx]][(k*frame_size)+l]
+					for c in range(3): # for each color channel
+						image[i+k][j+l][c] = \
+							book[indices[idx]][(k*frame_size)+l]
 			idx += 1
 	save_image(image, f"{FILENAME}_recreated.png")
 	print("done!")
@@ -264,8 +264,7 @@ def recreate_image(input_vectors, lattice):
 		A list of indices of codebook that comprises new image.
 	"""
 	# make empty input vector set
-	reconstructed = [[[0 for _ in range(3)] \
-		for _ in range(len(input_vectors[0]))] \
+	reconstructed = [[0.00 for _ in range(len(input_vectors[0]))] \
 		for _ in range(len(input_vectors))]
 	list_indices = [] # empty list for indices
 	for i, _ in enumerate(input_vectors):
@@ -287,7 +286,7 @@ def lattice_to_image(lattice):
 		An image corresponding to the lattice.
 	"""
 	# make an empty image to fill later
-	image = [[[0 for _ in range(3)] for _ in range(len(lattice)*FRAME_SIZE)] \
+	image = [[0.00 for _ in range(len(lattice)*FRAME_SIZE)] \
 		for _ in range(len(lattice[0])*FRAME_SIZE)]
 	for i in range(0, len(image), FRAME_SIZE):
 		for j in range(0, len(image[0]), FRAME_SIZE):
@@ -307,7 +306,7 @@ def input_vector_to_image(input_vectors):
 		An image corresponding to the input vectors.
 	"""
 	# make an empty image to later fill
-	image = [[[0 for _ in range(3)] for _ in range(int((len(input_vectors) * \
+	image = [[0.00 for _ in range(int((len(input_vectors) * \
 		len(input_vectors[0]))**(0.5)))] for _ in \
 		range(int((len(input_vectors) * len(input_vectors[0]))**(0.5)))]
 	idx = 0
@@ -345,7 +344,7 @@ def rand_weights():
 	Returns:
 		A random weight within the specified range.
 	"""
-	return [[randint(RANGE_MIN, RANGE_MAX) for _ in range(3)] \
+	return [round(uniform(RANGE_MIN, RANGE_MAX), 2) \
 		for _ in range(FRAME_SIZE**2)]
 
 def generate_lattice():
@@ -396,7 +395,7 @@ def show_image(data, curr_epoch, title):
 		curr_epoch : the current training epoch number.
 		title : title of the image being display.
 	"""
-	plt.imshow(data) # load data into frame
+	plt.imshow(data, cmap='gray', vmin=0.00, vmax=1.00) # load data into frame
 	plt.title(title) # denote epoch number
 	plt.axis('off') # remove axes
 	plt.pause(0.01) # delay between frames
@@ -407,13 +406,14 @@ def show_image(data, curr_epoch, title):
 
 def load_image():
 	"""Loads an image into an array.
-	Interfaces both `PIL` and `numpy` to load image, then finally convert to a
-	list for use.
+	Interfaces both `PIL` and `numpy` to load image, convert to grayscale,
+	then finally convert to a list for use.
 
 	Returns:
-		A list comprising of RGB values of the input image.
+		A list comprising of grayscale values of the input image.
 	"""
-	return (np.array(Image.open(f"sample_images/{FILENAME}.png"))).tolist()
+	return (np.array(Image.open(f"sample_images/{FILENAME}.png").\
+		convert("L"))/255.).tolist()
 
 def save_image(image, filename):
 	"""Saves an image from array.
@@ -422,8 +422,8 @@ def save_image(image, filename):
 	Parameters:
 		image : the image array to save.
 		filename : the filename to use.
-	"""
-	(Image.fromarray((np.asarray(image)).astype(np.uint8))).save(filename)
+	"""	
+	(Image.fromarray((np.asarray(image)*255).astype(np.uint8))).save(filename)
 
 if __name__ == '__main__':
 	if TYPE == 1: # if training

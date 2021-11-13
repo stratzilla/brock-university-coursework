@@ -3,6 +3,7 @@ data Stack a = Stack [a] deriving Show
 empty :: Stack a
 empty = Stack []
 
+isEmpty :: Stack a -> Bool a
 isEmpty (Stack xs) = null xs
 
 push :: Stack a -> a -> Stack a

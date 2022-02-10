@@ -4,4 +4,5 @@
 *.sql linguist-vendored
 *.tex linguist-vendored
 *.csv linguist-vendored
+*.php linguist-vendored
 *.hs linguist-language=Haskell

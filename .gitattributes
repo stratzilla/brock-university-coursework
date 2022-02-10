@@ -1,6 +1,6 @@
 *.html linguist-vendored
 *.css linguist-vendored
-*.php linguist-vendored
+*.gp linguist-vendored
 *.sql linguist-vendored
 *.tex linguist-vendored
 *.hs linguist-language=Haskell

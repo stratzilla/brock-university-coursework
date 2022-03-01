@@ -1,4 +1,3 @@
-# operator to merge two lists
 def union(rel_a, rel_b):
     """Relational algebra project set union.
     Finds the union between two relations.
